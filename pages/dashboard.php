@@ -27,8 +27,8 @@
                 if (isset($_GET['subject'])) {
                     $subject = $_GET['subject'];
                 }
-                
-                $performance_query="";
+
+                $performance_query = "";
                 if ((Input::exists() && Input::get("subject")) || isset($_GET['subject'])) {
                     $subject = Input::get("subject");
                     $class = Input::get("class");
@@ -71,7 +71,7 @@
                                     <div class="card card-topline-green">
                                         <div class="card-head">
                                             <header>Performance </header>
-                                            <form target="_blank"action="index.php?page=<?php echo "results" . "&type=download_results&subject=" . $subject."&class=" . $class; ?>" method="POST">
+                                            <form target="_blank"action="index.php?page=<?php echo "results" . "&type=download_results&subject=" . $subject . "&class=" . $class; ?>" method="POST">
                                                 <button type="submit"class="btn btn-success fa fa-print pull-right">Print</button>
 
                                             </form>  
@@ -106,40 +106,45 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <?php
-                                                if (DB::getInstance()->checkRows($performance_query)) {
-                                                    ?>
-                                                    <a style="color:blue; font-size: 20px;"><b><center>Students Performance For <?php echo $Subject_Name ?> <?php echo $Class_Name ?> </center></b></a>
-                                                    <table id="example1" class="table table-bordered table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th >#</th>
-                                                                <th >Students</th>
-                                                                <th >Performance</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <?php
-                                                            $overall_marks = DB::getInstance()->calculateSum("select Total_Marks from total_correct_answer where Subject_Id='$subject' ", 'Total_Marks');
+                                                if ((Input::exists() && Input::get("subject")) || isset($_GET['subject'])) {
 
-                                                            $no = 1;
-                                                            foreach ($performance_list as $staff_performance) {
-                                                                ?>
-                                                                <tr> 
-                                                                    <td><?php echo $no; ?></td>
-                                                                    <td><?php echo $staff_performance->Staff_Name; ?></td>
-                                                                    <td><?php echo $performance = round((($staff_performance->Staff_Performance / $overall_marks) * 100)); ?>%</td>
-
+                                                    if (DB::getInstance()->checkRows($performance_query)) {
+                                                        ?>
+                                                        <a style="color:blue; font-size: 20px;"><b><center>Students Performance For <?php echo $Subject_Name ?> <?php echo $Class_Name ?> </center></b></a>
+                                                        <table id="example1" class="table table-bordered table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th >#</th>
+                                                                    <th >Students</th>
+                                                                    <th >Performance</th>
                                                                 </tr>
+                                                            </thead>
+                                                            <tbody>
                                                                 <?php
-                                                                $no++;
-                                                            }
-                                                            ?>
-                                                        </tbody>
+                                                                $overall_marks = DB::getInstance()->calculateSum("select Total_Marks from total_correct_answer where Subject_Id='$subject' ", 'Total_Marks');
 
-                                                    </table>
-                                                    <?php
+                                                                $no = 1;
+                                                                foreach ($performance_list as $staff_performance) {
+                                                                    ?>
+                                                                    <tr> 
+                                                                        <td><?php echo $no; ?></td>
+                                                                        <td><?php echo $staff_performance->Staff_Name; ?></td>
+                                                                        <td><?php echo $performance = round((($staff_performance->Staff_Performance / $overall_marks) * 100)); ?>%</td>
+
+                                                                    </tr>
+                                                                    <?php
+                                                                    $no++;
+                                                                }
+                                                                ?>
+                                                            </tbody>
+
+                                                        </table>
+                                                        <?php
+                                                    } else {
+                                                        echo '<div class="alert alert-danger">No Results for ' . $Subject_Name . ' ' . $Class_Name . ' to display</div>';
+                                                    }
                                                 } else {
-                                                    echo '<div class="alert alert-danger">No Question for ' . $Subject_Name . ' ' . $Class_Name . ' was Answered</div>';
+                                                    echo '<div class="alert alert-danger">No Results to display</div>';
                                                 }
                                                 ?>
                                             </div>
