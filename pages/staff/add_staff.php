@@ -33,8 +33,8 @@
                     }
                 }
                 $class_id = "";
-                if(isset($_GET['class'])){
-                   $class_id = Input::get("class"); 
+                if (isset($_GET['class'])) {
+                    $class_id = Input::get("class");
                 }
                 if (Input::exists() && Input::get("search") == "search") {
                     $class_id = Input::get("class");
@@ -50,8 +50,8 @@
                                     <div class="page-title">Student</div>
                                 </div>
                                 <div class="actions panel_actions pull-right">
-                                  <a class="btn btn-primary" href="index.php?page=<?php echo "add_staff" . '&mode=' . $modez = ($mode == 'registered') ? 'register' : 'registered'; ?>"><i class="fa fa-eye"></i><?php echo $modez = ($mode == 'registered') ? 'Register' : 'Registered'; ?> Students</a>
-                                  </div>
+                                    <a class="btn btn-primary" href="index.php?page=<?php echo "add_staff" . '&mode=' . $modez = ($mode == 'registered') ? 'register' : 'registered'; ?>"><i class="fa fa-eye"></i><?php echo $modez = ($mode == 'registered') ? 'Register' : 'Registered'; ?> Students</a>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -69,6 +69,7 @@
                                     $staff_name = strtoupper(Input::get('staff_name'));
                                     $stuff_photo = ($_FILES['stuff_photo']['name']);
                                     $class = Input::get("class");
+                                    $email = Input::get("email");
 
 
                                     if ($stuff_photo != "") {
@@ -81,6 +82,7 @@
                                         DB::getInstance()->insert("staff", array(
                                             "Staff_Name" => $staff_name,
                                             "Code" => $staff_id,
+                                            "Email" => $email,
                                             "Class_Id" => $class,
                                             "Image" => $stuff_photo));
                                         $message = $staff_name . " has been successfull regestered";
@@ -90,10 +92,10 @@
                                     } else {
                                         echo "<h4 style='color:red;'><center>Staff already exists</center></h4>";
                                     }
-                                    Redirect::go_to("index.php?page=add_staff&mode=" . $mode."&class=" . $class_id);
+                                    Redirect::go_to("index.php?page=add_staff&mode=" . $mode . "&class=" . $class_id);
                                 }
                                 ?>
-                                <form role="form" action="index.php?page=<?php echo "add_staff" . '&mode=' . $mode."&class=" . $class_id; ?>"method="POST" enctype="multipart/form-data">
+                                <form role="form" action="index.php?page=<?php echo "add_staff" . '&mode=' . $mode . "&class=" . $class_id; ?>"method="POST" enctype="multipart/form-data">
                                     <div class="card card-topline-yellow">
                                         <div class="card-head">
                                             <header>Register a Student</header>
@@ -116,7 +118,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Name</label>
-                                                <input type="text" class="form-control" name="staff_name" placeholder="Enter staff names" required>
+                                                <input type="text" class="form-control" name="staff_name" placeholder="Enter student names" required>
                                             </div>
                                             <div class="form-group">
                                                 <label>Class:</label>
@@ -129,6 +131,10 @@
                                                     endforeach;
                                                     ?>
                                                 </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                <input type="email" class="form-control" name="email" placeholder="Enter student email" required>
                                             </div>
 
                                             <div class="box-footer">
@@ -150,13 +156,12 @@
                                     if ($query) {
 
                                         $staff_name = DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$staff_id' ", "Staff_Name");
-                                        $log = $_SESSION['hospital_staff_names'] . "  deleted " . $staff_name . "s information";
-                                        DB::getInstance()->logs($log);
+
                                         echo $message = "<center><h4 style='color:red'>data has been deleted successfully</h4></center>";
                                     } else {
                                         echo $error = "<center><h4 style='color:red'>there is a server error</h4></center>";
                                     }
-                                    Redirect::go_to("index.php?page=add_staff&mode=" . $mode."&class=" . $class_id);
+                                    Redirect::go_to("index.php?page=add_staff&mode=" . $mode . "&class=" . $class_id);
                                 }
                                 if (Input::exists() && Input::get("edit_staff") == "edit_staff") {
                                     $staff_id = Input::get('staff_id');
@@ -164,6 +169,7 @@
                                     $staff_name = strtoupper(Input::get('staff_name'));
                                     $stuff_photo = ($_FILES['stuff_photo']['name']);
                                     $class = Input::get('class');
+                                    $email = Input::get("email");
 
                                     $staff_namez = DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$staff_id' ", "Staff_Name");
 
@@ -175,6 +181,7 @@
                                         $editStaff = DB::getInstance()->update("staff", $staff_id, array(
                                             "Staff_Name" => $staff_name,
                                             "Code" => $staff_code,
+                                            "Email" => $email,
                                             "Class_Id" => $class,
                                             "Image" => $stuff_photo), "Staff_Id");
                                     } else {
@@ -182,6 +189,7 @@
                                         $editStaff = DB::getInstance()->update("staff", $staff_id, array(
                                             "Staff_Name" => $staff_name,
                                             "Class_Id" => $class,
+                                            "Email" => $email,
                                             "Code" => $staff_code
                                                 ), "Staff_Id");
                                     }
@@ -196,7 +204,7 @@
                                         echo $error = "<center><h4 style='color:red'>there is a server error</h4></center>";
                                     }
                                     $test_mode = (isset($_GET["mode"])) ? "&mode=view" : "";
-                                    Redirect::go_to("index.php?page=add_staff&mode=" . $mode."&class=" . $class_id);
+                                    Redirect::go_to("index.php?page=add_staff&mode=" . $mode . "&class=" . $class_id);
                                 }
 
                                 if (Input::exists() && Input::get("send_policy") == "send_policy") {
@@ -230,7 +238,7 @@
                                     } else {
                                         echo "<h4 style='color:red;'><center>No Policy was sent</center></h4>";
                                     }
-                                    Redirect::go_to("index.php?page=add_staff&mode=" . $mode."&class=" . $class_id);
+                                    Redirect::go_to("index.php?page=add_staff&mode=" . $mode . "&class=" . $class_id);
                                 }
                                 ?>
 
@@ -240,30 +248,33 @@
                                         <header><?php echo $modez = ($mode == 'registered') ? '' : 'Last entered 10 '; ?>Student List</header>
                                     </div>
                                     <div class="card-body " id="bar-parent">
-                                           <div class="col-md-12">
-                                                <form method="post" action="index.php?page=<?php echo "add_staff" . '&mode=' . $mode."&class=" . $class_id; ?>">
-                                                    <div class="form-group col-md-4">
-                                                        <label>Class:</label>
-                                                        <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'uploadedData');" required>
-                                                            <option value="">Choose...</option>
-                                                            <?php
-                                                            $qstn_list = DB::getInstance()->querySample("select * from class ORDER BY Id");
-                                                            foreach ($qstn_list as $qtn):
-                                                                $selected=($qtn->Id==$class_id)?"selected":"";
-                                                                echo '<option value="' . $qtn->Id . '"'.$selected.'>' . $qtn->Class_Name . '</option>';
-                                                            endforeach;
-                                                            ?>
-                                                        </select>
-                                                    </div>
+                                        <div class="col-md-12">
+                                            <form method="post" action="index.php?page=<?php echo "add_staff" . '&mode=' . $mode . "&class=" . $class_id; ?>">
+                                                <div class="form-group col-md-4">
+                                                    <label>Class:</label>
+                                                    <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'uploadedData');" required>
+                                                        <option value="">Choose...</option>
+                                                        <?php
+                                                        $qstn_list = DB::getInstance()->querySample("select * from class ORDER BY Id");
+                                                        foreach ($qstn_list as $qtn):
+                                                            $selected = ($qtn->Id == $class_id) ? "selected" : "";
+                                                            echo '<option value="' . $qtn->Id . '"' . $selected . '>' . $qtn->Class_Name . '</option>';
+                                                        endforeach;
+                                                        ?>
+                                                    </select>
+                                                </div>
 
 
-                                                    <div class="box-footer col-md-3">
-                                                        <br/>
-                                                        <button type="submit"  name="search" value="search" class="btn btn-success fa fa-search pull-right">search</button>
-                                                    </div>
-                                                </form>
+                                                <div class="box-footer col-md-3">
+                                                    <br/>
+                                                    <button type="submit"  name="search" value="search" class="btn btn-success fa fa-search pull-right">search</button>
+                                                </div>
 
+                                            </form>
+                                            <div class="form-group col-md-5 ">
+                                                <a data-toggle='modal' class="btn btn-primary pull-right" href='#modal-form'><i class="fa fa-mail">Send Exam</i></a>
                                             </div>
+                                        </div>
                                         <?php
                                         $queryStaff = 'SELECT * FROM staff WHERE Status=1 and Class_Id="' . $class_id . '" ORDER BY Staff_Id desc ' . $limit;
                                         if (DB::getInstance()->checkRows($queryStaff)) {
@@ -278,35 +289,26 @@
                                                     
                                                 } else {
                                                     ?>
-                                                                            <!--<a data-toggle='modal' class="btn btn-success pull-right" href='#modal-child_protection'><i class="fa fa-mail">Send exam</i></a>-->
+                                                                                                                        <!--<a data-toggle='modal' class="btn btn-success pull-right" href='#modal-child_protection'><i class="fa fa-mail">Send exam</i></a>-->
 
 
                                                     <?php
                                                 }
                                             }
                                             ?>
-                                         
+
                                             <table id="example1" class="table table-bordered table-striped">
                                                 <thead>
                                                     <tr>
                                                         <th style="width: 1%;">#</th>
                                                         <th style="width: 4%;">RegNo.</th>
                                                         <th style="width: 25%;">Name</th>
+                                                        <th style="width: 25%;">Email</th>
                                                         <th style="width: 25%;">Class</th>
                                                         <th style="width: 15%;">Photo</th>
-                                                        <th style="width: 25%;"> <?php
-                                                            if ($mode == 'register') {
-                                                                
-                                                            } else {
-                                                                if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Staff")) && !isset($_SESSION['immergencepassword'])) {
-                                                                    
-                                                                } else {
-                                                                    ?> 
-                                                                    <label class="btn btn-success btn-xs" for="selectall" id="selectControl" onclick="Check()">Click to Select All</label>
-                                                                    <?php
-                                                                }
-                                                            }
-                                                            ?>
+                                                        <th style="width: 25%;"> 
+                                                            <label class="btn btn-success btn-xs" for="selectall" id="selectControl" onclick="Check()">Click to Select All</label>
+
                                                         </th>
                                                     </tr>
                                                 </thead>
@@ -320,6 +322,7 @@
                                                             <td style="width: 1%;"><?php echo $no; ?></td>
                                                             <td style="width: 4%;"><?php echo $staffs->Code; ?></td>
                                                             <td style="width: 25%;"><?php echo $staffs->Staff_Name; ?></td>
+                                                            <td style="width: 25%;"><?php echo $staffs->Email; ?></td>
                                                             <td style="width: 25%;"><?php echo DB::getInstance()->displayTableColumnValue("select Class_Name from class where Id='$staffs->Class_Id' ", "Class_Name") ?></td>
                                                             <td style="width: 15%;"><img class="img-circle" height="40px" width="40px" src="staff_image/<?php echo $staffs->Image; ?>" alt="<?php echo $staffs->Code; ?>"></td>
                                                             <td style="width: 25%;"><div class="btn-group xs">
@@ -336,31 +339,17 @@
                                                                             
                                                                         } else {
                                                                             ?>
-                                                                            <li><a href="index.php?page=<?php echo "add_staff" . '&action=delete&staff_id=' . $staffs->Staff_Id . '&mode=' . $mode."&class=" . $class_id; ?>" onclick="return confirm('Are you sure you want to delete <?php echo $staffs->Staff_Name; ?>?');">Delete</a></li>
+                                                                            <li><a href="index.php?page=<?php echo "add_staff" . '&action=delete&staff_id=' . $staffs->Staff_Id . '&mode=' . $mode . "&class=" . $class_id; ?>" onclick="return confirm('Are you sure you want to delete <?php echo $staffs->Staff_Name; ?>?');">Delete</a></li>
                                                                         <?php } ?> <li class="divider"></li>
 
                                                                     </ul>
                                                                 </div>
-                                                                <?php
-                                                                if ($mode == 'register') {
-                                                                    
-                                                                } else {
-                                                                    ?>  <?php
-                                                                    if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Human Resource")) && !isset($_SESSION['immergencepassword'])) {
-                                                                        
-                                                                    } else {
-                                                                        ?>
-                                                                        <a class="btn btn-primary xs" data-toggle="modal" data-target="#modal-child_protection-<?php echo $staffs->Staff_Id; ?>">send exam</a>
-
-                                                                        <?php
-                                                                    }
-                                                                }
-                                                                ?>
+                                                                <input type="checkbox" id="<?php echo $staffs->Staff_Id ?>"onchange="clicked('<?php echo $staffs->Staff_Id; ?>', '<?php echo $staffs->Staff_Name; ?>','<?php echo $staffs->Email; ?>');" value="<?php echo $staffs->Staff_Name.','.$staffs->Email; ?>" name="staffs[]">
                                                             </td>
 
                                                     <div class="modal fade" id="modal-<?php echo $staffs->Staff_Id; ?>">
                                                         <div class="modal-dialog">
-                                                            <form role="form" action="index.php?page=<?php echo "add_staff" . '&mode=' . $mode."&class=" . $class_id; ?>" method="POST" enctype="multipart/form-data">
+                                                            <form role="form" action="index.php?page=<?php echo "add_staff" . '&mode=' . $mode . "&class=" . $class_id; ?>" method="POST" enctype="multipart/form-data">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
                                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -399,6 +388,10 @@
                                                                                 ?>
                                                                             </select>
                                                                         </div>
+                                                                        <div class="form-group">
+                                                                            <label>Email</label>
+                                                                            <input type="email" class="form-control" name="email" value="<?php echo $staffs->Email; ?>" placeholder="Enter student email" required>
+                                                                        </div>
 
                                                                     </div>
                                                                     <div class="modal-footer">
@@ -414,66 +407,6 @@
                                                         <!-- /.modal-dialog -->
                                                     </div>
 
-                                                    <div class="modal fade" id="modal-child_protection-<?php echo $staffs->Staff_Id; ?>">
-                                                        <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span></button>
-                                                                    <h4 class="modal-title">Fill in this form and send exam</h4>
-                                                                </div> 
-                                                                <div class="modal-body">
-                                                                    <div class="row">
-                                                                        <div class="col-lg-12 col-md-12 col-sm-12">
-                                                                            <div class="col-lg-3 col-md-3 col-sm-3">
-                                                                                <label >Subject:</label>
-                                                                            </div>
-                                                                            <div class="col-lg-8 col-md-8 col-sm-8">
-                                                                                <select name="class" class="select2" id="subject<?php echo $staffs->Staff_Id; ?>"style="width: 100%" required>
-                                                                                    <option value="">Choose...</option>
-                                                                                    <?php
-                                                                                    $qstn_list = DB::getInstance()->querySample("select * from subject where Class_Id='$staffs->Class_Id' and Status=1 ORDER BY Id");
-                                                                                    foreach ($qstn_list as $qtn):
-                                                                                        echo '<option value="' . $qtn->Id . '">' . $qtn->Subject_Name . '</option>';
-                                                                                    endforeach;
-                                                                                    ?>
-                                                                                </select>
-                                                                            </div>
-
-                                                                        </div>
-
-                                                                        <div class="col-lg-12 col-md-12 col-sm-12">
-                                                                            <div class="col-lg-4 col-md-4 col-sm-4" style="color:orangered">Staff</div>
-                                                                            <div class="col-lg-8 col-md-8 col-sm-8" style="color:orangered">email</div>
-
-                                                                        </div>
-
-                                                                        <div class="col-lg-12 col-md-12 col-sm-12" >
-                                                                            <div class="col-lg-3 col-md-3 col-sm-3">
-                                                                                <label><?php echo $staffs->Staff_Name; ?></label>
-                                                                                <input type="hidden" value="<?php echo $staffs->Staff_Name; ?>" class="form-control" id="survey_staff_name<?php echo $staffs->Staff_Id; ?>"/>
-
-                                                                                <input type="hidden" value="<?php echo $staffs->Staff_Id; ?>" class="form-control" id="survey_staff_id<?php echo $staffs->Staff_Id; ?>"/>
-                                                                            </div>
-                                                                            <div  class="col-lg-8 col-md-8 col-sm-8">
-                                                                                <input type="email" id="survey_email<?php echo $staffs->Staff_Id; ?>" class="form-control pull-right" required placeholder="enter email"> 
-                                                                                <input type="hidden" value="<?php echo $staffs->Staff_Id . "" . generatePasswordz(); ?>" id="survey_code<?php echo $staffs->Staff_Id; ?>" class="form-control pull-right" required></div>
-                                                                            <div class="col-lg-1 col-md-1 col-sm-1">
-                                                                                <br>
-                                                                            </div>
-                                                                        </div>
-
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
-                                                                    <button type="submit" data-dismiss="modal" value="send_policy" id="policy_button" onclick="send_policy('<?php echo $staffs->Staff_Id; ?>');" class="btn btn-primary">Send Exam</button>
-                                                                </div>
-                                                            </div>
-                                                            <!-- /.modal-content -->
-                                                        </div>
-                                                        <!-- /.modal-dialog -->
-                                                    </div>
                                                     </tr>
 
                                                     <?php
@@ -489,6 +422,55 @@
                                         }
                                         ?>
 
+                                        <div class="modal fade" id="modal-form">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title">Fill in this form and send Exam</h4>
+                                                    </div> 
+                                                      <div class="modal-body">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3">
+                                                                        <label >Subject:</label>
+                                                                    </div>
+                                                                    <div class="col-lg-8 col-md-8 col-sm-8">
+                                                                        <select name="class" class="select2" id="subject_"style="width: 100%" required>
+                                                                            <option value="">Choose...</option>
+                                                                            <?php
+                                                                            $qstn_list = DB::getInstance()->querySample("select * from subject where Class_Id='$class_id' and Status=1 ORDER BY Id");
+                                                                            foreach ($qstn_list as $qtn):
+                                                                                echo '<option value="' . $qtn->Id . '">' . $qtn->Subject_Name . '</option>';
+                                                                            endforeach;
+                                                                            ?>
+                                                                        </select>
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                                    <div class="col-lg-4 col-md-4 col-sm-4">Staff</div>
+                                                                    <div class="col-lg-8 col-md-8 col-sm-8">email</div>
+
+                                                                </div>
+
+                                                                <div class="col-lg-12 col-md-12 col-sm-12" id="id_data">
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                                                            <button type="submit" name="send_survey" data-dismiss="modal" value="send_survey"  class="btn btn-primary" onclick="send_exam();">Send Exam</button>
+                                                        </div>
+                                                </div>
+                                                <!-- /.modal-content -->
+                                            </div>
+                                            <!-- /.modal-dialog -->
+                                        </div>
 
                                         <!-- /.box-body -->
                                     </div>

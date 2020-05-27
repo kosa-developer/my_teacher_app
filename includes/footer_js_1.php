@@ -235,98 +235,49 @@
         })
     })
 
-    function Check() {
-
+ function Check() {
+     
         var checkBoxes = document.getElementsByName('staffs[]');
         for (i = 0; i < checkBoxes.length; i++) {
             checkBoxes[i].checked = (selectControl.innerHTML == "Click to Select All") ? 'checked' : '';
 
             var staff_id = checkBoxes[i].id;
             var staff_sprint = checkBoxes[i].value.split(',');
-            var staff_name = staff_sprint[0]
-            var staff_email = staff_sprint[1]
-
-            clicked(staff_id, staff_name, staff_email);
-
+            var staff_name=staff_sprint[0]
+            var staff_email=staff_sprint[1]
+            
+            clicked(staff_id,staff_name,staff_email);
+            
         }
-
+       
         selectControl.innerHTML = (selectControl.innerHTML == "Click to Select All") ? "Click to Unselect All" : 'Click to Select All';
     }
     $tr_id = 1;
-    function clicked(staff_id, staff_name, email) {
+    function clicked(staff_id, staff_name,email) {
+        var btn = document.getElementById("printing_button");
         var row_ids = Math.round(Math.random( ) * 300000000);
         $tr_id = row_ids + 2;
         if (document.getElementById(staff_id).checked) {
-            document.getElementById('id_data').insertAdjacentHTML('beforeend', '<div id="' + row_ids + '" class="col-lg-12 col-md-12 col-sm-12"><div class="col-lg-3 col-md-3 col-sm-3"><label>' + staff_name + '</label><input type="hidden" value="' + staff_id + '" class="form-control" name="staff_id_[]"/></div>\n\
-                  <div  class="col-lg-8 col-md-8 col-sm-8"><input type="email" name="email_[]" value="' + email + '" class="form-control pull-right" required> <input type="hidden" value="' + staff_id + '<?php echo generatePasswordz(); ?>" name="code_[]" class="form-control pull-right" required></div>\n\
-<div class="col-lg-1 col-md-1 col-sm-1"><button type="button" value="' + row_ids + '" class="fa fa-trash-o btn btn-danger btn-xs" onclick="delete_item(this.value);"></button><br/><br/></div></div>');
-
+            document.getElementById('id_data').insertAdjacentHTML('beforeend', '<div id="' + row_ids + '" class="col-lg-12 col-md-12 col-sm-12"><div class="col-lg-3 col-md-3 col-sm-3"><label>' + staff_name + '</label><input type="hidden" value="' + staff_id + '" class="form-control" name="staff_id[]"/></div>\n\
+                  <div  class="col-lg-8 col-md-8 col-sm-8"><input type="email" name="email[]" value="' + email + '" class="form-control pull-right" required> <input type="hidden" value="' + staff_id + '<?php echo generatePasswordz(); ?>" name="code[]" class="form-control pull-right" required></div>\n\
+<div class="col-lg-1 col-md-1 col-sm-1"><button type="button" value="' + row_ids + '" class="fa fa-trash-o btn btn-danger btn-xs" onclick="delete_item(this.value);"></button><br></div></div>');
+            btn.setAttribute("type", "submit");
         } else {
             $('#id_data').html('');
-
+            btn.setAttribute("type", "button");
         }
 
 
 
     }
-    function send_exam() {
+    function send_exam(){
     
-        var subject = document.getElementById('subject_').value;
-       
-        var student_id = document.getElementsByName('staff_id_[]');
-        
-        var code = document.getElementsByName('code_[]');
-        
-        var email = document.getElementsByName('email_[]');
-
-        var array_student_id = Array();
-        var array_code = Array();
-        var array_email = Array();
-        for (var i = 0; i < student_id.length; i++) {
-            array_student_id.push(student_id[i].value);
-            array_code.push(code[i].value);
-            array_email.push(email[i].value);
-        }
-      
-        jQuery('#result').css({'color': 'red', 'font-style': 'italic', 'font-size': '150%'});
-      if(subject == ""){
-            jQuery('#result').css({'color': 'red', 'font-style': 'italic', 'font-size': '150%'});
-
-            jQuery('#result').html('Subject must be filled');
-      }else{  if(student_id.length>0){
-            jQuery('#result').html('sending...');
-
-                jQuery.ajax({
-                    type: 'POST',
-                    url: 'index.php?page=ajax_data',
-                    data: {submit_text: "exam", staff_id: array_student_id, code: array_code, email: array_email, subject: subject},
-                    success: function (html) {
-                        var word = 'Exam has been successfully sent';
-                        var wordz = 'Exam could not be sent';
-                        var regex = new RegExp('\\b' + word + '\\b');
-                        var regexz = new RegExp('\\b' + wordz + '\\b');
-                        if (regex.test(html)) {
-                            jQuery('#result').css({'color': 'blue', 'font-style': 'italic', 'font-size': '150%'});
-                            jQuery('#result').html(word);
-                        } else if (regexz.test(html)) {
-                            jQuery('#result').css({'color': 'red', 'font-style': 'italic', 'font-size': '150%'});
-                            jQuery('#result').html('connection error');
-                        } else {
-                            jQuery('#result').css({'color': 'red', 'font-style': 'italic', 'font-size': '150%'});
-                            jQuery('#result').html('communication error');
-                        }
-                    }
-                }); 
-        }else{
-             jQuery('#result').css({'color': 'red', 'font-style': 'italic', 'font-size': '150%'});
-
-            jQuery('#result').html('No student was selected');
-        }}
+    var student_id = document.getElementsByName('staff[]');
     }
     $tr_id = 1;
 
 
-
+    
 
     function delete_item(element_id) {
         //            document.getElementById('add_button').style.display = 'block';
@@ -354,7 +305,7 @@
                 jQuery.ajax({
                     type: 'POST',
                     url: 'index.php?page=ajax_data',
-                    data: {submit_text: "policy", staff_id: staff_id, staff_name: staff_name, code: code, email: email, subject: subject},
+                    data: {submit_text: "policy", staff_id: staff_id, staff_name: staff_name, code: code, email: email,subject:subject},
                     success: function (html) {
 
                         var word = 'Exam has been successfully sent';
@@ -403,8 +354,8 @@
             $('#' + return_id).html('');
         }
     }
-
-
+    
+    
     function returnquestion(subject_id, return_id) {
 
         if (subject_id != '') {

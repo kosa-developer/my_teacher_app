@@ -96,56 +96,58 @@
 
                                             <?php
                                             $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Subject_Id="' . $subject . '" ORDER BY Question_Id  ' . $limit;
-                                          if ($time_left <= 0) {
-                                               echo '<div class="alert alert-danger">Deadline has passed. Try another link</div>';
-                                          }else{  if (DB::getInstance()->checkRows($queryquestion)) {
+                                            if ($time_left <= 0) {
+                                                echo '<div class="alert alert-danger">Deadline has passed. Try another link</div>';
+                                            } else {
+                                                if (DB::getInstance()->checkRows($queryquestion)) {
 
-                                                $data_got = DB::getInstance()->querySample($queryquestion);
-                                                $no = 1;
-                                                foreach ($data_got as $questionx) {
-                                                    ?>
-                                                    <div class="col-md-10">
-                                                    <?php
-                                                    echo"<strong> " . $questionx->Question . "</strong><br/>";
-
-                                                    $data_answer = DB::getInstance()->querySample("select * from policy_answers where Question_Id='$questionx->Question_Id' and status=1 ");
-                                                    $count_answer = 1;
-                                                    foreach ($data_answer as $answerx) {
-                                                        $alphabet = ($count_answer == 1) ? "a" : (($count_answer == 2) ? "b" : (($count_answer == 3) ? "c" : (($count_answer == 4) ? "d" : (($count_answer == 5) ? "e" : (($count_answer == 6) ? "f" : "g")))));
+                                                    $data_got = DB::getInstance()->querySample($queryquestion);
+                                                    $no = 1;
+                                                    foreach ($data_got as $questionx) {
                                                         ?>
-                                                            <div class='col-md-8' id="<?php echo $questionx->Question_Id . "_" . $count_answer . "_answer" ?>"><strong><?php echo $alphabet; ?>.</strong> <?php echo $answerx->Answer; ?>
-                                                            </div>
-                                                            <div class='col-md-1'> 
-                                                                <div class='form-group'>
-                    <?php if ($questionx->Choice > 1) { ?>
-                                                                        <div class='checkbox checkbox-icon-black'>
+                                                        <div class="col-md-10">
+                                                            <?php
+                                                            echo"<strong> " . $questionx->Question . "</strong><br/>";
 
-                                                                            <input id='<?php echo $answerx->Answer_Id; ?>' type='checkbox' value='<?php echo $answerx->Answer_Id; ?>' onchange="check(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $subject ?>')">
-
-                                                                        </div><?php } else {
-                        ?>
-
-                                                                        <div class="radio">
-                                                                            <input type="radio" name="<?php echo $questionx->Question_Id; ?>" id="<?php echo $answerx->Answer_Id; ?>" value='<?php echo $answerx->Answer_Id; ?>' onchange="radio(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $subject; ?>')">
-
-                                                                        </div>
-                    <?php } ?>
+                                                            $data_answer = DB::getInstance()->querySample("select * from policy_answers where Question_Id='$questionx->Question_Id' and status=1 ");
+                                                            $count_answer = 1;
+                                                            foreach ($data_answer as $answerx) {
+                                                                $alphabet = ($count_answer == 1) ? "a" : (($count_answer == 2) ? "b" : (($count_answer == 3) ? "c" : (($count_answer == 4) ? "d" : (($count_answer == 5) ? "e" : (($count_answer == 6) ? "f" : "g")))));
+                                                                ?>
+                                                                <div class='col-md-8' id="<?php echo $questionx->Question_Id . "_" . $count_answer . "_answer" ?>"><strong><?php echo $alphabet; ?>.</strong> <?php echo $answerx->Answer; ?>
                                                                 </div>
+                                                                <div class='col-md-1'> 
+                                                                    <div class='form-group'>
+                        <?php if ($questionx->Choice > 1) { ?>
+                                                                            <div class='checkbox checkbox-icon-black'>
+
+                                                                                <input id='<?php echo $answerx->Answer_Id; ?>' type='checkbox' value='<?php echo $answerx->Answer_Id; ?>' onchange="check(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $subject ?>')">
+
+                                                                            </div><?php } else {
+                            ?>
+
+                                                                            <div class="radio">
+                                                                                <input type="radio" name="<?php echo $questionx->Question_Id; ?>" id="<?php echo $answerx->Answer_Id; ?>" value='<?php echo $answerx->Answer_Id; ?>' onchange="radio(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $subject; ?>')">
+
+                                                                            </div>
+                        <?php } ?>
+                                                                    </div>
 
 
-                                                            </div><br/><?php
-                    $count_answer++;
-                }
-                ?> 
-                                                        <br/>
-                                                    </div>
-                <?php
-                $no++;
-            }
-        } else {
-            echo '<div class="alert alert-danger">No Question registered</div>';
-                                          }}
-        ?>
+                                                                </div><br/><?php
+                                                                $count_answer++;
+                                                            }
+                                                            ?> 
+                                                            <br/>
+                                                        </div>
+                                                        <?php
+                                                        $no++;
+                                                    }
+                                                } else {
+                                                    echo '<div class="alert alert-danger">No Question registered</div>';
+                                                }
+                                           
+                                            ?>
 
                                         </div>
                                         <form role="form" action="index.php?page=<?php echo "question_page" . '&code=' . $staff_code . '&subject=' . $subject; ?>" method="POST" enctype="multipart/form-data">
@@ -154,10 +156,11 @@
                                                 <button type="submit" name="submit_policy" class="btn btn-success pull-right" value="submit_policy">Finish</button>
                                             </div> 
                                         </form>
-    <?php
-    }
-}
-?>
+                                        <?php
+                                         }
+                                    }
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -224,7 +227,7 @@
         <!-- end page content -->
         <!-- end page container -->
         <!-- start footer -->
-        <?php include_once 'includes/footer.php'; ?>
+<?php include_once 'includes/footer.php'; ?>
         <!-- end footer -->
         <!-- start js include path -->
         <script src="js/jquery.min.js" type="text/javascript"></script>

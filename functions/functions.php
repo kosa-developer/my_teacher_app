@@ -1,52 +1,98 @@
 <?php
 
+function send_exam($staff_id, $email, $user, $code, $system_email, $system_email_password, $subject) {
 
-function send_policy_Email($staff_id,$email,$user,$code,$system_email,$system_email_password,$subject){
     require 'PHPMailerAutoload.php';
-$mail = new PHPMailer;
+    for ($i = 0; $i < sizeof($staff_id); $i++) {
+        $mail = new PHPMailer;
 
-$mail->SMTPDebug = 4;                               // Enable verbose debug output
+        $mail->SMTPDebug = 4;                               // Enable verbose debug output
 
-$mail->isSMTP();                                      // Set mailer to use SMTP
-$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
-$mail->SMTPAuth = true;                               // Enable SMTP authentication
-$mail->Username =$system_email;                 // SMTP username
-$mail->Password =$system_email_password;                           // SMTP password
-$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-$mail->Port = 587;                                    // TCP port to connect to
+        $mail->isSMTP();                                      // Set mailer to use SMTP
+        $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+        $mail->Username = $system_email;                 // SMTP username
+        $mail->Password = $system_email_password;                           // SMTP password
+        $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+        $mail->Port = 587;                                    // TCP port to connect to
 
-$mail->setFrom($system_email, 'developer');
-$mail->addAddress($email, $user);     // Add a recipient            // Name is optional
+        $mail->setFrom($system_email, 'developer');
+        $mail->addAddress($email[$i], $user[$i]);     // Add a recipient            // Name is optional
 //$mail->addReplyTo($email);
-
 //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
 //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
-$mail->isHTML(true);                                  // Set email format to HTML
+        $mail->isHTML(true);                                  // Set email format to HTML
 
-$mail->Subject = 'UNSB Exams';
-$mail->Body    = 'Hello,<br/>'
-        . 'Hope you are doing well.<br/>'
-        . 'Please follow the link below, read the document and answer the questions provided. <br/>'
-        . 'http://127.0.0.1:81/myteacher_app/index.php?page=policy_document_page&code='.$code.'&subject='.$subject.'<br/>'
-        . 'Thanks.<br/>'
-        . 'Best regards.<br/>'
-        . 'Head of nursing and Midwifery services.<br/>'
-        . 'Bwindi community hospital.';
+        $mail->Subject = 'UNSB Exams';
+        $mail->Body = 'Hello ' . $user[$i] . ' ,<br/>'
+                . 'Hope you are doing well.<br/>'
+                . 'Please follow the link below, read the document and answer the questions provided. <br/>'
+                . 'http://127.0.0.1:81/myteacher_app/index.php?page=policy_document_page&code=' . $code[$i] . '&subject=' . $subject . '<br/>'
+                . 'Thanks.<br/>'
+                . 'Best regards.<br/>'
+                . 'Head of nursing and Midwifery services.<br/>'
+                . 'Bwindi community hospital.';
 
-if(!$mail->send()) {
-    echo 'Exam could not be sent';
-    echo 'Mailer Error: ' . $mail->ErrorInfo;
-} else {
-    echo 'Exam has been successfully sent';
-    DB::getInstance()->insert("policy_codes", array(
-        "Code" => $code,
-        "Subject_Id" => $subject,
-        "Email" => $email,
-        "Staff_Id" => $staff_id
-    ));
-    
+        if (!$mail->send()) {
+            echo 'Exam could not be sent';
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        } else {
+            echo 'Exam has been successfully sent';
+            DB::getInstance()->insert("policy_codes", array(
+                "Code" => $code[$i],
+                "Subject_Id" => $subject,
+                "Email" => $email[$i],
+                "Staff_Id" => $staff_id[$i]
+            ));
+        }
+    }
 }
+
+function send_policy_Email($staff_id, $email, $user, $code, $system_email, $system_email_password, $subject) {
+    require 'PHPMailerAutoload.php';
+    $mail = new PHPMailer;
+
+    $mail->SMTPDebug = 4;                               // Enable verbose debug output
+
+    $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+    $mail->SMTPAuth = true;                               // Enable SMTP authentication
+    $mail->Username = $system_email;                 // SMTP username
+    $mail->Password = $system_email_password;                           // SMTP password
+    $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+    $mail->Port = 587;                                    // TCP port to connect to
+
+    $mail->setFrom($system_email, 'developer');
+    $mail->addAddress($email, $user);     // Add a recipient            // Name is optional
+//$mail->addReplyTo($email);
+//$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+    $mail->isHTML(true);                                  // Set email format to HTML
+
+    $mail->Subject = 'UNSB Exams';
+    $mail->Body = 'Hello ' . $user . ' ,<br/>'
+            . 'Hope you are doing well.<br/>'
+            . 'Please follow the link below, read the document and answer the questions provided. <br/>'
+            . 'http://127.0.0.1:81/myteacher_app/index.php?page=policy_document_page&code=' . $code . '&subject=' . $subject . '<br/>'
+            . 'Thanks.<br/>'
+            . 'Best regards.<br/>'
+            . 'Head of nursing and Midwifery services.<br/>'
+            . 'Bwindi community hospital.';
+
+    if (!$mail->send()) {
+        echo 'Exam could not be sent';
+        echo 'Mailer Error: ' . $mail->ErrorInfo;
+    } else {
+        echo 'Exam has been successfully sent';
+        DB::getInstance()->insert("policy_codes", array(
+            "Code" => $code,
+            "Subject_Id" => $subject,
+            "Email" => $email,
+            "Staff_Id" => $staff_id
+        ));
+    }
 }
+
 function generatePassword($length = 8) {
 
     // start with a blank password
@@ -87,6 +133,7 @@ function generatePassword($length = 8) {
     // done!
     return $password;
 }
+
 function generatePasswordz($length = 6) {
 
     // start with a blank password
@@ -127,7 +174,6 @@ function generatePasswordz($length = 6) {
     // done!
     return $password;
 }
-
 
 function escape($string) {
     return htmlentities($string);
@@ -189,10 +235,10 @@ function calculateAge($smallDate, $largeDate) {
 
 function calculateDateDifference($smallDate, $largeDate, $type) {
     $age = 0;
-    $diff = strtotime($largeDate)-strtotime($smallDate);
-    $age = ($type == "years") ? $diff/(60 * 60 * 24*30*12) : $age;
-    $age = ($type == "months") ? $diff/(60 * 60 * 24*30) : $age;
-    $age = ($type == "days") ? $diff/(60 * 60 * 24) : $age;
+    $diff = strtotime($largeDate) - strtotime($smallDate);
+    $age = ($type == "years") ? $diff / (60 * 60 * 24 * 30 * 12) : $age;
+    $age = ($type == "months") ? $diff / (60 * 60 * 24 * 30) : $age;
+    $age = ($type == "days") ? $diff / (60 * 60 * 24) : $age;
     return $age;
 }
 

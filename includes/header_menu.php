@@ -100,7 +100,7 @@ if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Staff"
                 <!-- start manage user dropdown -->
                 <li class="dropdown dropdown-user">
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                        <img alt="" class="img-circle " src="..\staff_image/<?php echo $_SESSION['hospital_profile_picture'] ?>" />
+                        <img alt="" class="img-circle " src="staff_image/<?php echo $_SESSION['hospital_profile_picture'] ?>" />
                         <span class="username username-hide-on-mobile"><?php echo $_SESSION['hospital_staff_names']; ?></span>
                         <i class="fa fa-angle-down"></i>
                     </a>

@@ -13,6 +13,21 @@ if (isset($_POST["submit_text"]) && $_POST['submit_text'] == "policy") {
 
     echo send_policy_Email($staff_id, $email, $staff_name, $code, $system_email, $system_email_password,$subject);
 }
+if (isset($_POST["submit_text"]) && $_POST['submit_text'] == "exam") {
+    $subject = Input::get("subject");
+    $staff_id = Input::get("staff_id");
+    $code = Input::get('code');
+    $email = Input::get('email');
+    $system_email = DB::getInstance()->displayTableColumnValue("select Email from system_email where Status=1 and Type='Policy'", 'Email');
+    $system_email_password = DB::getInstance()->displayTableColumnValue("select Password from system_email where Status=1 and Type='Policy'", 'Password');
+$student_name=array();
+    for($i=0;$i<sizeof($staff_id);$i++){
+        $student_name[]=DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$staff_id[$i]' and Status=1", 'Staff_Name');
+       
+  }
+   send_exam($staff_id, $email, $student_name, $code, $system_email, $system_email_password,$subject);
+
+}
 if (isset($_POST["class"]) && !empty($_POST["class"])&&!isset($_POST["return_array"])) {
 
     $class_id = $_POST["class"];
@@ -34,7 +49,7 @@ if (isset($_POST["class"]) && !empty($_POST["class"])&&!isset($_POST["return_arr
     </div>
 
     <?php
-}if (isset($_POST["subject"]) && !empty($_POST["subject"])) {
+}if (isset($_POST["subject"]) && !empty($_POST["subject"])&&!isset($_POST['submit_text'])) {
 
     $subject_id = $_POST["subject"];
     $query = "select * from policy_questions WHERE Subject_Id='$subject_id' and Status=1";
