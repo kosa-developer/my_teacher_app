@@ -1,18 +1,17 @@
 <?php
-$total_questions = DB::getInstance()->countElements("select Question_Id from policy_questions where Subject_Id='$subject'");
-$answered_questions = DB::getInstance()->countElements("select distinct(Question_Id) from staff_answer where Staff_Id='$staff_id'");
+$total_questions = DB::getInstance()->countElements("select Question_Id from policy_questions where Exam_Id='$exam'");
+$answered_questions = DB::getInstance()->countElements("select distinct(Question_Id) from staff_answer where Staff_Id='$staff_id' and Exam_Id='$exam'");
 $queryscores = "SELECT distinct(staff_answer.Question_Id) FROM staff_answer,policy_answers  WHERE staff_answer.Staff_Id='$staff_id' and staff_answer.Answer_Id=policy_answers.Answer_Id and staff_answer.Question_Id=policy_answers.Question_Id and policy_answers.Correct=1";
-$total_scores = DB::getInstance()->displayTableColumnValue("select Staff_Performance from  staff_performance where Staff_Id='$staff_id' and Subject_Id='$subject'", 'Staff_Performance');
-$overall_marks = DB::getInstance()->calculateSum("select Total_Marks from total_correct_answer where Subject_Id='$subject'", 'Total_Marks');
+$total_scores = DB::getInstance()->displayTableColumnValue("select Staff_Performance from  staff_performance where Staff_Id='$staff_id' and Exam_Id='$exam'", 'Staff_Performance');
+$overall_marks = DB::getInstance()->calculateSum("select Total_Marks from total_correct_answer where Exam_Id='$exam'", 'Total_Marks');
 $percentage_score = round(($total_scores / $overall_marks) * 100);
 $remarks = ($percentage_score < 30) ? "Tried" : (($percentage_score < 50) ? "Fair Performance" : (($percentage_score < 60) ? "Average Performance" : (($percentage_score < 70) ? "Good Performance" : (($percentage_score < 80) ? "Very Good Performance" : "Excellent Performance"))));
-$Subject_Name = DB::getInstance()->displayTableColumnValue("select Subject_Name from subject where Id='$subject'", "Subject_Name");
-$Class_Name = DB::getInstance()->displayTableColumnValue("select Class_Name from class,staff where staff.Class_Id=class.Id and staff.Staff_Id='$staff_id'", "Class_Name");
+
 ?>    
 <div class="col-md-4 col-xs-12">
     <div class="card card-topline-green">
         <div class="card-head">
-            <header> <a style="color:blue">Performance For</a>: <?php echo $names; ?> <?php echo $Class_Name?> in <?php echo $Subject_Name?>  </header>
+            <header> <a style="color:blue">Performance For</a>: <?php echo $names; ?> <?php echo $Class_Name?> in <?php echo $Subject_Name?>  <?php echo $exam_name?> </header>
         </div>
         <div class="white-box">
             <div class=" cardbox patient-profile">

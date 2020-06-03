@@ -6,7 +6,7 @@ $GLOBALS['config'] = array(
         'host' => '127.0.0.1',
         'username' => 'root',
         'password' => 't00r',
-        'db' => 'myteached_db'
+        'db' => 'exam_db'
     ),
     'remember' => array(
         'cookie_name' => 'hash',

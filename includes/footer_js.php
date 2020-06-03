@@ -269,9 +269,9 @@
 
 
     }
-    function send_exam() {
+      function send_exam() {
     
-        var subject = document.getElementById('subject_').value;
+        var exam = document.getElementById('exam').value;
        
         var student_id = document.getElementsByName('staff_id_[]');
         
@@ -289,17 +289,17 @@
         }
       
         jQuery('#result').css({'color': 'red', 'font-style': 'italic', 'font-size': '150%'});
-      if(subject == ""){
+      if(exam == ""){
             jQuery('#result').css({'color': 'red', 'font-style': 'italic', 'font-size': '150%'});
 
-            jQuery('#result').html('Subject must be filled');
+            jQuery('#result').html('Exam field must be filled');
       }else{  if(student_id.length>0){
             jQuery('#result').html('sending...');
 
                 jQuery.ajax({
                     type: 'POST',
                     url: 'index.php?page=ajax_data',
-                    data: {submit_text: "exam", staff_id: array_student_id, code: array_code, email: array_email, subject: subject},
+                    data: {submit_text: "exam", staff_id: array_student_id, code: array_code, email: array_email, exam_id: exam},
                     success: function (html) {
                         var word = 'Exam has been successfully sent';
                         var wordz = 'Exam could not be sent';
@@ -323,6 +323,7 @@
             jQuery('#result').html('No student was selected');
         }}
     }
+  
     $tr_id = 1;
 
 
@@ -403,15 +404,46 @@
             $('#' + return_id).html('');
         }
     }
+    function returnsubject_(class_id, return_id) {
 
+        if (class_id != '') {
+            $.ajax({
+                type: 'POST',
+                url: 'index.php?page=ajax_data',
+                data: {class_: class_id},
+                success: function (html) {
+                    $('#' + return_id).html(html);
 
-    function returnquestion(subject_id, return_id) {
+                }
+            });
+        } else {
+            $('#' + return_id).html('');
+        }
+    }
+
+    function returnexam(subject_id, return_id) {
 
         if (subject_id != '') {
             $.ajax({
                 type: 'POST',
                 url: 'index.php?page=ajax_data',
                 data: {subject: subject_id},
+                success: function (html) {
+                    $('#' + return_id).html(html);
+
+                }
+            });
+        } else {
+            $('#' + return_id).html('');
+        }
+    }
+     function returnquestion(exam_id, return_id) {
+
+        if (exam_id != '') {
+            $.ajax({
+                type: 'POST',
+                url: 'index.php?page=ajax_data',
+                data: {exam: exam_id},
                 success: function (html) {
                     $('#' + return_id).html(html);
 

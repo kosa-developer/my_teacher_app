@@ -1,9 +1,14 @@
 <?php
 
-function send_exam($staff_id, $email, $user, $code, $system_email, $system_email_password, $subject) {
+function send_exam($staff_id, $email, $user, $code, $system_email, $system_email_password, $exam_id) {
 
     require 'PHPMailerAutoload.php';
     for ($i = 0; $i < sizeof($staff_id); $i++) {
+        $exam_name = DB::getInstance()->displayTableColumnValue("select Exam_Name from exam where Id='$exam_id'", "Exam_Name");
+        $subject = DB::getInstance()->displayTableColumnValue("select Subject_Id from exam where Id='$exam_id'", "Subject_Id");
+        $Subject_Name = DB::getInstance()->displayTableColumnValue("select Subject_Name from subject where Id='$subject'", "Subject_Name");
+        $Class_Name = DB::getInstance()->displayTableColumnValue("select Class_Name from class,staff where staff.Class_Id=class.Id and staff.Staff_Id='$staff_id[$i]'", "Class_Name");
+
         $mail = new PHPMailer;
 
         $mail->SMTPDebug = 4;                               // Enable verbose debug output
@@ -16,7 +21,7 @@ function send_exam($staff_id, $email, $user, $code, $system_email, $system_email
         $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
         $mail->Port = 587;                                    // TCP port to connect to
 
-        $mail->setFrom($system_email, 'developer');
+        $mail->setFrom($system_email, 'UNSB EXAM');
         $mail->addAddress($email[$i], $user[$i]);     // Add a recipient            // Name is optional
 //$mail->addReplyTo($email);
 //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
@@ -26,12 +31,12 @@ function send_exam($staff_id, $email, $user, $code, $system_email, $system_email
         $mail->Subject = 'UNSB Exams';
         $mail->Body = 'Hello ' . $user[$i] . ' ,<br/>'
                 . 'Hope you are doing well.<br/>'
-                . 'Please follow the link below, read the document and answer the questions provided. <br/>'
-                . 'http://127.0.0.1:81/myteacher_app/index.php?page=policy_document_page&code=' . $code[$i] . '&subject=' . $subject . '<br/>'
+                . 'An assessment for <b>'.$Class_Name.' '.$Subject_Name.' '.$exam_name.' </b>is ready for you<br/>'
+                . 'Please follow the link below, read the notes provided and answer the questions as follows. <br/>'
+                . 'https://myteacher.unsbwindi.ac.ug/index.php?page=policy_document_page&code=' . $code[$i] . '&exam=' . $exam_id . '<br/>'
                 . 'Thanks.<br/>'
                 . 'Best regards.<br/>'
-                . 'Head of nursing and Midwifery services.<br/>'
-                . 'Bwindi community hospital.';
+                . 'Academic Registrar UNSB.';
 
         if (!$mail->send()) {
             echo 'Exam could not be sent';
@@ -40,7 +45,7 @@ function send_exam($staff_id, $email, $user, $code, $system_email, $system_email
             echo 'Exam has been successfully sent';
             DB::getInstance()->insert("policy_codes", array(
                 "Code" => $code[$i],
-                "Subject_Id" => $subject,
+                "Exam_Id" => $exam_id,
                 "Email" => $email[$i],
                 "Staff_Id" => $staff_id[$i]
             ));

@@ -289,7 +289,7 @@
                                                     
                                                 } else {
                                                     ?>
-                                                                                                                        <!--<a data-toggle='modal' class="btn btn-success pull-right" href='#modal-child_protection'><i class="fa fa-mail">Send exam</i></a>-->
+                                                                                                                                    <!--<a data-toggle='modal' class="btn btn-success pull-right" href='#modal-child_protection'><i class="fa fa-mail">Send exam</i></a>-->
 
 
                                                     <?php
@@ -344,7 +344,7 @@
 
                                                                     </ul>
                                                                 </div>
-                                                                <input type="checkbox" id="<?php echo $staffs->Staff_Id ?>"onchange="clicked('<?php echo $staffs->Staff_Id; ?>', '<?php echo $staffs->Staff_Name; ?>','<?php echo $staffs->Email; ?>');" value="<?php echo $staffs->Staff_Name.','.$staffs->Email; ?>" name="staffs[]">
+                                                                <input type="checkbox" id="<?php echo $staffs->Staff_Id ?>"onchange="clicked('<?php echo $staffs->Staff_Id; ?>', '<?php echo $staffs->Staff_Name; ?>', '<?php echo $staffs->Email; ?>');" value="<?php echo $staffs->Staff_Name . ',' . $staffs->Email; ?>" name="staffs[]">
                                                             </td>
 
                                                     <div class="modal fade" id="modal-<?php echo $staffs->Staff_Id; ?>">
@@ -430,42 +430,44 @@
                                                             <span aria-hidden="true">&times;</span></button>
                                                         <h4 class="modal-title">Fill in this form and send Exam</h4>
                                                     </div> 
-                                                      <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-lg-12 col-md-12 col-sm-12">
-                                                                    <div class="col-lg-3 col-md-3 col-sm-3">
-                                                                        <label >Subject:</label>
-                                                                    </div>
-                                                                    <div class="col-lg-8 col-md-8 col-sm-8">
-                                                                        <select name="class" class="select2" id="subject_"style="width: 100%" required>
-                                                                            <option value="">Choose...</option>
-                                                                            <?php
-                                                                            $qstn_list = DB::getInstance()->querySample("select * from subject where Class_Id='$class_id' and Status=1 ORDER BY Id");
-                                                                            foreach ($qstn_list as $qtn):
-                                                                                echo '<option value="' . $qtn->Id . '">' . $qtn->Subject_Name . '</option>';
-                                                                            endforeach;
-                                                                            ?>
-                                                                        </select>
-                                                                    </div>
-
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                                               
+                                                                <div class=" form-group col-lg-5 col-md-5 col-sm-5">
+                                                                      <label >Subject:</label>
+                                                                    <select name="class" class="select2" id="subject_"style="width: 100%" onchange="returnexam(this.value, 'exam_data');" required>
+                                                                        <option value="">Choose...</option>
+                                                                        <?php
+                                                                        $qstn_list = DB::getInstance()->querySample("select * from subject where Class_Id='$class_id' and Status=1 ORDER BY Id");
+                                                                        foreach ($qstn_list as $qtn):
+                                                                            echo '<option value="' . $qtn->Id . '">' . $qtn->Subject_Name . '</option>';
+                                                                        endforeach;
+                                                                        ?>
+                                                                    </select>
                                                                 </div>
-
-                                                                <div class="col-lg-12 col-md-12 col-sm-12">
-                                                                    <div class="col-lg-4 col-md-4 col-sm-4">Staff</div>
-                                                                    <div class="col-lg-8 col-md-8 col-sm-8">email</div>
-
-                                                                </div>
-
-                                                                <div class="col-lg-12 col-md-12 col-sm-12" id="id_data">
+                                                                <div class="col-lg-7 col-md-7 col-sm-7" id="exam_data">
 
                                                                 </div>
 
                                                             </div>
+
+                                                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                                                <div class="col-lg-4 col-md-4 col-sm-4">Staff</div>
+                                                                <div class="col-lg-8 col-md-8 col-sm-8">email</div>
+
+                                                            </div>
+
+                                                            <div class="col-lg-12 col-md-12 col-sm-12" id="id_data">
+
+                                                            </div>
+
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
-                                                            <button type="submit" name="send_survey" data-dismiss="modal" value="send_survey"  class="btn btn-primary" onclick="send_exam();">Send Exam</button>
-                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                                                        <button type="submit" name="send_survey" data-dismiss="modal" value="send_survey"  class="btn btn-primary" onclick="send_exam();">Send Exam</button>
+                                                    </div>
                                                 </div>
                                                 <!-- /.modal-content -->
                                             </div>

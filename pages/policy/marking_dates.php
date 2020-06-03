@@ -54,14 +54,14 @@
                                 <?php
                                 if (Input::exists() && Input::get("submit_deadline") == "submit_deadline") {
                                     $deadline = Input::get('deadline');
-                                    $subject = Input::get('subject');
+                                    $exam = Input::get('exam');
                                     $duplicate = 0;
                                     $submited = 0;
-                                    $queryDup = DB::getInstance()->checkRows("select * from marking_schedule where Subject_Id='$subject'");
+                                    $queryDup = DB::getInstance()->checkRows("select * from marking_schedule where Exam_Id='$exam'");
                                     if (!$queryDup) {
                                         DB::getInstance()->insert("marking_schedule", array(
                                             "Date" => $deadline,
-                                            "Subject_Id" => $subject));
+                                            "Exam_Id" => $exam));
                                         echo '<div class="alert alert-success">deadline recorded successfully</div>';
                                     } else {
                                         echo '<div class="alert alert-success">deadline already exisits</div>';
@@ -80,7 +80,7 @@
                                         <div class="card-body " id="bar-parent">
 
                                             <div id="add_element" > 
-                                                <div class="form-group col-md-4">
+                                                <div class="form-group col-md-2">
                                                     <label>Class:</label>
                                                     <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'selectedData');" required>
                                                         <option value="">Choose...</option>
@@ -93,7 +93,10 @@
                                                     </select>
                                                 </div>
 
-                                                <div class="col-md-4" id="selectedData">
+                                                <div class="col-md-2" id="selectedData">
+
+                                                </div>
+                                                 <div class="col-md-2" id="exam_data">
 
                                                 </div>
                                                 <div class="col-md-3"
@@ -175,11 +178,12 @@
                                                     $data_got = DB::getInstance()->querySample($querydeadline);
                                                     $no = 1;
                                                     foreach ($data_got as $deadline) {
+                                                     
                                                         ?>
                                                         <tr> 
                                                             <td style="width: 1%;"><?php echo $no; ?></td>
-                                                            <td><?php echo DB::getInstance()->displayTableColumnValue("select Class_Name from class,subject where subject.Class_Id=class.Id and subject.Id='$deadline->Subject_Id'", "Class_Name"); ?></td>
-                                                            <td><?php echo DB::getInstance()->displayTableColumnValue("select Subject_Name from subject where Id='$deadline->Subject_Id'", "Subject_Name"); ?></td>
+                                                            <td><?php echo DB::getInstance()->displayTableColumnValue("select Class_Name from class,subject,exam where subject.Class_Id=class.Id and exam.Subject_Id=subject.Id and exam.Id='$deadline->Exam_Id'", "Class_Name"); ?> </td>
+                                                            <td><?php echo DB::getInstance()->displayTableColumnValue("select Subject_Name from subject,exam where exam.Subject_Id=subject.Id and exam.Id='$deadline->Exam_Id'", "Subject_Name"); ?>  <?php echo DB::getInstance()->displayTableColumnValue("select Exam_Name from exam where Id='$deadline->Exam_Id'", "Exam_Name"); ?></td>
                                                             <td><?php echo $deadline->Date; ?></td>
                                                             <td style="width: 20%;">
                                                                 <div class="btn-group xs">

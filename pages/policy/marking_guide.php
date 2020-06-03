@@ -5,7 +5,7 @@
     </div>
            <div class="card-body " id="bar-parent">
         <?php
-        $queryquestion = 'SELECT * FROM policy_questions WHERE Subject_Id="'.$subject.'" and Status=1 ORDER BY Question_Id' . $limit;
+        $queryquestion = 'SELECT * FROM policy_questions WHERE Exam_Id="'.$exam.'" and Status=1 ORDER BY Question_Id' . $limit;
         if (DB::getInstance()->checkRows($queryquestion)) {
             ?>
             <table id="example1" class="table table-bordered table-striped">

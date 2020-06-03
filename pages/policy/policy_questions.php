@@ -57,15 +57,23 @@
                                     $marks = Input::get('marks');
                                     $choice = Input::get('choice');
                                     $subject = Input::get('subject');
+                                    $exam=Input::get('exam');
+                                    $exam_insert= DB::getInstance()->insert("exam", array(
+                                                "Exam_Name" => $exam,
+                                                "Subject_Id" => $subject));
+                                   
                                     $duplicate = 0;
                                     $submited = 0;
+                                     if($exam_insert){
+                                        $exam_id = DB::getInstance()->displayTableColumnValue("select Id from exam where Exam_Name='$exam' and Subject_Id='$subject'", "Id"); 
+                                        if($exam_id!=null&&$exam_id!=""){
                                     for ($i = 0; $i < sizeof($question); $i++) {
-                                        $queryDup = DB::getInstance()->checkRows("select * from policy_questions where Question='$question[$i]' and Subject_Id='$subject'");
+                                        $queryDup = DB::getInstance()->checkRows("select * from policy_questions where Question='$question[$i]' and Exam_Id='$exam_id'");
                                         if (!$queryDup) {
                                             DB::getInstance()->insert("policy_questions", array(
                                                 "Question" => $question[$i],
                                                 "Choice" => $choice[$i],
-                                                "Subject_Id" => $subject,
+                                                "Exam_Id" => $exam_id,
                                                 "Marks" => $marks[$i]));
                                             $submited++;
                                             $log = $_SESSION['hospital_staff_names'] . "  registered a new question :";
@@ -73,7 +81,7 @@
                                         } else {
                                             $duplicate++;
                                         }
-                                    }
+                                     }}}
                                     if ($submited > 0) {
                                         echo '<div class="alert alert-success">' . $submited . ' question(s) submitted successfully</div>';
                                     }
@@ -91,8 +99,8 @@
 
                                         </div>
                                         <div class="card-body " id="bar-parent">
-                                            <div class="col-md-8">
-                                                <div class="form-group col-md-6">
+                                            <div class="col-md-12">
+                                                <div class="form-group col-md-4">
                                                     <label>Class:</label>
                                                     <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'selectedData');" required>
                                                         <option value="">Choose...</option>
@@ -105,9 +113,14 @@
                                                     </select>
                                                 </div>
 
-                                                <div class="col-md-6" id="selectedData">
+                                                <div class="col-md-4" id="selectedData">
 
                                                 </div>
+                                                <div class="form-group col-md-4">
+                                                   <label>Exam name:</label> 
+                                                   <input class="form-control" name="exam" required>
+                                                </div>
+                                                
                                             </div>
                                             <div id="question"><button type="button" class="btn btn-success btn-xs pull-right" id="add_more" onclick="add_element();">Add more</button>
                                                 <div id="add_element" > 
@@ -181,9 +194,9 @@
                                         <header><?php echo $modez = ($mode == 'registered') ? '' : 'Last entered 10 '; ?>questions List</header>
                                     </div>
                                     <div class="card-body " id="bar-parent">
-                                            <div class="col-md-8">
+                                            <div class="col-md-12">
                                                 <form method="post" action="index.php?page=<?php echo "policy_questions" . '&mode=' . $mode; ?>">
-                                                    <div class="form-group col-md-4">
+                                                    <div class="form-group col-md-3">
                                                         <label>Class:</label>
                                                         <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'uploadedData');" required>
                                                             <option value="">Choose...</option>
@@ -196,7 +209,11 @@
                                                         </select>
                                                     </div>
 
-                                                    <div class="col-md-4" id="uploadedData">
+                                                    <div class="col-md-3" id="uploadedData">
+
+                                                    </div>
+                                                    
+                                                    <div class="col-md-3" id="exam_data">
 
                                                     </div>
 
@@ -208,9 +225,9 @@
 
                                             </div>
                                         <?php
-                                         if ((Input::exists() && Input::get("subject"))|| isset($_GET['subject']) ) {
-                                                    $subject = Input::get("subject");
-                                        $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Subject_Id="'.$subject.'" ORDER BY Question_Id' . $limit;
+                                         if ((Input::exists() && Input::get("exam"))|| isset($_GET['exam']) ) {
+                                                    $exam = Input::get("exam");
+                                        $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Exam_Id="'.$exam.'" ORDER BY Question_Id' . $limit;
                                         if (DB::getInstance()->checkRows($queryquestion)) {
                                             ?>
                                             <table id="example1" class="table table-bordered table-striped">

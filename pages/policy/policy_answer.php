@@ -105,6 +105,9 @@
                                                 <div class="col-md-4" id="returned_subject">
 
                                                 </div>
+                                                  <div class="col-md-4" id="exam_data">
+
+                                                </div>
                                                 <div class="col-md-12" id="returned_question">
 
                                                 </div>
@@ -163,11 +166,11 @@
                                         <header><?php echo $modez = ($mode == 'registered') ? '' : 'Last entered 10 '; ?>questions List</header>
                                     </div>
                                     <div class="card-body " id="bar-parent">
-                                        <div class="col-md-8">
+                                        <div class="col-md-10">
                                             <form method="post" action="index.php?page=<?php echo "policy_answer" . '&mode=' . $mode; ?>">
-                                                <div class="form-group col-md-4">
+                                                <div class="form-group col-md-3">
                                                     <label>Class:</label>
-                                                    <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'uploadedData');" required>
+                                                    <select name="class" class="select2" style="width: 100%" onchange="returnsubject_(this.value, 'uploadedData');" required>
                                                         <option value="">Choose...</option>
                                                         <?php
                                                         $qstn_list = DB::getInstance()->querySample("select * from class ORDER BY Id");
@@ -178,9 +181,13 @@
                                                     </select>
                                                 </div>
 
-                                                <div class="col-md-4" id="uploadedData">
+                                                <div class="col-md-3" id="uploadedData">
 
                                                 </div>
+                                                <div class="col-md-3" id="exam_data_">
+
+                                                </div>
+                                              
 
                                                 <div class="box-footer col-md-3">
                                                     <br/>
@@ -191,11 +198,17 @@
                                         </div>
                                         <div class="col-md-12">
                                             <?php
-                                            if ((Input::exists() && Input::get("subject")) || isset($_GET['subject'])) {
+                                            if ((Input::exists() && Input::get("exam")) || isset($_GET['exam'])) {
+                                                $exam = Input::get("exam");
                                                 $subject = Input::get("subject");
-                                                $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Subject_Id="' . $subject . '" ORDER BY Question_Id' . $limit;
+                                                $class = Input::get("class");
+                                                $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Exam_Id="' . $exam . '" ORDER BY Question_Id' . $limit;
                                                 if (DB::getInstance()->checkRows($queryquestion)) {
                                                     ?>
+                                             <form target="_blank"action="index.php?page=<?php echo "results" . "&type=download_marking_guide&exam=" . $exam . "&subject=" . $subject . "&class=" . $class; ?>" method="POST">
+                                                <button type="submit"class="btn btn-primary fa fa-print pull-right">Print</button>
+
+                                            </form>  
                                                     <table id="example1" class="table table-bordered table-striped">
                                                         <thead>
                                                             <tr>

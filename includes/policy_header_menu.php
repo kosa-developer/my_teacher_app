@@ -1,26 +1,28 @@
 <?php
 if (isset($_GET['code'])) {
     if (isset($_GET['code'])) {
-     $staff_code = $_GET['code'];
-     $subject=$_GET['subject'];
-    $staffCheck = "SELECT * FROM policy_codes,staff WHERE policy_codes.Staff_Id=staff.Staff_Id AND policy_codes.Code='$staff_code' and policy_codes.Subject_Id='$subject' LIMIT 1";
-    $staff_list = DB::getInstance()->query($staffCheck);
-    $staff_id =DB::getInstance()->displayTableColumnValue($staffCheck, "Staff_Id");
-    if ($staff_id == "NA" || $staff_id == "N/A" || $staff_id == "") {
-        $staff_id = "";
-    }
-    $profile_picture = DB::getInstance()->displayTableColumnValue($staffCheck, "Image");
-    $names = DB::getInstance()->displayTableColumnValue($staffCheck, "Staff_Name");
+        $staff_code = $_GET['code'];
+        $exam = $_GET['exam'];
+        $staffCheck = "SELECT * FROM policy_codes,staff WHERE policy_codes.Staff_Id=staff.Staff_Id AND policy_codes.Code='$staff_code' and policy_codes.Exam_Id='$exam' LIMIT 1";
+        $staff_list = DB::getInstance()->query($staffCheck);
+        $staff_id = DB::getInstance()->displayTableColumnValue($staffCheck, "Staff_Id");
+        if ($staff_id == "NA" || $staff_id == "N/A" || $staff_id == "") {
+            $staff_id = "";
+        }
+        $profile_picture = DB::getInstance()->displayTableColumnValue($staffCheck, "Image");
+        $names = DB::getInstance()->displayTableColumnValue($staffCheck, "Staff_Name");
+        $exam_name = DB::getInstance()->displayTableColumnValue("select Exam_Name from exam where Id='$exam'", "Exam_Name");
+        $subject = DB::getInstance()->displayTableColumnValue("select Subject_Id from exam where Id='$exam'", "Subject_Id");
+        $Subject_Name = DB::getInstance()->displayTableColumnValue("select Subject_Name from subject where Id='$subject'", "Subject_Name");
+        $Class_Name = DB::getInstance()->displayTableColumnValue("select Class_Name from class,staff where staff.Class_Id=class.Id and staff.Staff_Id='$staff_id'", "Class_Name");
 
-    if (empty($profile_picture)) {
-        $profile_picture = 'person.jpg';
-    } else {
-        $profile_picture = $profile_picture;
-    }
 
-   
-}$previous_page = $_SESSION["PREVIOUS_URL"];
-    
+        if (empty($profile_picture)) {
+            $profile_picture = 'person.jpg';
+        } else {
+            $profile_picture = $profile_picture;
+        }
+    }$previous_page = $_SESSION["PREVIOUS_URL"];
 }
 ?>
 
@@ -31,7 +33,7 @@ if (isset($_GET['code'])) {
         <div class="page-logo">
             <a href="#">
                 <span class="logo-icon fa fa-hospital-o fa-rotate-left"></span>
-                <span class="logo-default" ><?php echo $HOSPITAL_NAME_ABREV?></span> </a>
+                <span class="logo-default" ><?php echo $HOSPITAL_NAME_ABREV ?></span> </a>
         </div>
         <!-- logo end -->
         <ul class="nav navbar-nav navbar-left in">
@@ -45,8 +47,8 @@ if (isset($_GET['code'])) {
         <!-- start header menu -->
         <div class="top-menu">
             <ul class="nav navbar-nav pull-right">
-           <!-- start notification dropdown -->
-                
+                <!-- start notification dropdown -->
+
                 <!-- end notification dropdown -->
                 <!-- start manage user dropdown -->
                 <li class="dropdown dropdown-user">
@@ -55,7 +57,7 @@ if (isset($_GET['code'])) {
                         <span class="username username-hide-on-mobile"><?php echo $names; ?></span>
                         <i class="fa fa-angle-down"></i>
                     </a>
-                  
+
                 </li>
             </ul>
         </div>

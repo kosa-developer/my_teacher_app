@@ -20,7 +20,7 @@ if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Staff"
    $hidden1="";
 } else {
     $hidden = "";
-     $hidden1="hidden";
+     $hidden1="";
 }
 ?>
 

@@ -42,11 +42,11 @@
                                     $email = Input::get('email');
                                     $password = Input::get('password');
 
-                                    $queryDup = DB::getInstance()->checkRows("select * from system_email where Email='$email' and Type='$type' and Status=1");
+                                    $queryDup = DB::getInstance()->checkRows("select * from system_email where Email='$email' and Type='Policy' and Status=1");
                                     if (!$queryDup) {
                                         DB::getInstance()->insert("system_email", array(
                                             "Email" => $email,
-                                            "Type" => $type,
+                                            "Type" => 'Policy',
                                             "Password" => $password));
                                         $log = $_SESSION['hospital_staff_names'] . "  registered a new staff :" . $staff_name;
                                         DB::getInstance()->logs($log);
@@ -91,10 +91,10 @@
                                 if (isset($_GET['action']) && $_GET['action'] == 'delete') {
 
                                     $Email_Id = $_GET['Email_Id'];
-                                    $query = DB::getInstance()->query("UPDATE system_email SET Status=0 WHERE Email_Id='$Email_Id' and Type='$type'");
+                                    $query = DB::getInstance()->query("UPDATE system_email SET Status=0 WHERE Email_Id='$Email_Id' and Type='Policy'");
                                     if ($query) {
 
-                                        $email = DB::getInstance()->displayTableColumnValue("select email from system_email where Email_Id='$Email_Id' and Type='$type' ", "email");
+                                        $email = DB::getInstance()->displayTableColumnValue("select email from system_email where Email_Id='$Email_Id' and Type='Policy' ", "email");
                                         $log = $_SESSION['hospital_staff_names'] . "  deleted " . $email . "s information";
                                         DB::getInstance()->logs($log);
                                         echo $message = "<center><h4 style='color:red'>data has been deleted successfully</h4></center>";
@@ -107,7 +107,7 @@
                                     $Email_Id = Input::get('Email_Id');
                                     $email = Input::get('email');
                                     $password=Input::get('password');
-                                    $email_z = DB::getInstance()->displayTableColumnValue("select Email from system_email where Email_Id='$Email_Id' and Type='$type' ", "Email");
+                                    $email_z = DB::getInstance()->displayTableColumnValue("select Email from system_email where Email_Id='$Email_Id' and Type='Policy' ", "Email");
 
                                     $editemail = DB::getInstance()->update("system_email", $Email_Id, array(
                                         "Email" => $email,
@@ -131,7 +131,7 @@
                                     </div>
                                     <div class="card-body " id="bar-parent">
                                         <?php
-                                        $queryemail = "SELECT * FROM system_email WHERE Type='$type' and  Status=1 ORDER BY Email_Id desc";
+                                        $queryemail = "SELECT * FROM system_email WHERE Type='Policy' and  Status=1 ORDER BY Email_Id desc";
                                         if (DB::getInstance()->checkRows($queryemail)) {
                                             ?>
                                             <table  class="table table-bordered table-striped">

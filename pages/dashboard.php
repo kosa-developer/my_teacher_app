@@ -16,24 +16,26 @@
                 $hidden = "";
                 $hidden1 = "";
                 if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Staff" || $_SESSION['hospital_role'] == "Staff")) && !isset($_SESSION['immergencepassword'])) {
-                    $hidden = "hidden";
+                    $hidden = "";
                     $hidden1 = "";
                 } else {
                     $hidden = "";
-                    $hidden1 = "hidden";
+                    $hidden1 = "";
                 }
-                $subject = "";
+                $exam = "";
                 $class = "";
-                if (isset($_GET['subject'])) {
-                    $subject = $_GET['subject'];
+                if (isset($_GET['exam'])) {
+                    $exam = $_GET['exam'];
                 }
 
                 $performance_query = "";
-                if ((Input::exists() && Input::get("subject")) || isset($_GET['subject'])) {
-                    $subject = Input::get("subject");
+                if ((Input::exists() && Input::get("exam")) || isset($_GET['exam'])) {
+                    $exam = Input::get("exam");
                     $class = Input::get("class");
-                    $performance_query = "SELECT * FROM staff_performance where Subject_Id='$subject' order by Staff_Performance desc";
+                    $subject = Input::get("subject");
+                    $performance_query = "SELECT * FROM staff_performance where Exam_Id='$exam' order by Staff_Performance desc";
                     $performance_list = DB::getInstance()->querySample($performance_query);
+                    $Exam_Name = DB::getInstance()->displayTableColumnValue("select Exam_Name from exam where Id='$exam'", "Exam_Name");
                     $Subject_Name = DB::getInstance()->displayTableColumnValue("select Subject_Name from subject where Id='$subject'", "Subject_Name");
                     $Class_Name = DB::getInstance()->displayTableColumnValue("select Class_Name from class where Id='$class'", "Class_Name");
                 }
@@ -71,16 +73,16 @@
                                     <div class="card card-topline-green">
                                         <div class="card-head">
                                             <header>Performance </header>
-                                            <form target="_blank"action="index.php?page=<?php echo "results" . "&type=download_results&subject=" . $subject . "&class=" . $class; ?>" method="POST">
+                                            <form target="_blank"action="index.php?page=<?php echo "results" . "&type=download_results&exam=" . $exam . "&subject=" . $subject . "&class=" . $class; ?>" method="POST">
                                                 <button type="submit"class="btn btn-success fa fa-print pull-right">Print</button>
 
                                             </form>  
                                         </div>
                                         <div class="card-body " id="bar-parent">
 
-                                            <div class="col-md-8">
+                                            <div class="col-md-12">
                                                 <form method="post" action="index.php?page=<?php echo "dashboard" . '&mode=' . $mode; ?>">
-                                                    <div class="form-group col-md-4">
+                                                    <div class="form-group col-md-3">
                                                         <label>Class:</label>
                                                         <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'uploadedData');" required>
                                                             <option value="">Choose...</option>
@@ -93,10 +95,12 @@
                                                         </select>
                                                     </div>
 
-                                                    <div class="col-md-4" id="uploadedData">
+                                                    <div class="col-md-3" id="uploadedData">
 
                                                     </div>
+                                                    <div class="col-md-3" id="exam_data">
 
+                                                    </div>
                                                     <div class="box-footer col-md-3">
                                                         <br/>
                                                         <button type="submit"  name="search" value="search" class="btn btn-success fa fa-search pull-right">search</button>
@@ -106,11 +110,16 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <?php
-                                                if ((Input::exists() && Input::get("subject")) || isset($_GET['subject'])) {
+                                                if ((Input::exists() && Input::get("exam")) || isset($_GET['exam'])) {
 
+                                                    $policydoneQuery = "select * from policy_codes where Exam_Id='$exam' AND Status=0";
+                                                    $PendingpolicydoneQuery = "select * from policy_codes where Exam_Id='$exam' AND Status=1";
+
+                                                    $PolicydoneData = DB::getInstance()->querySample($policydoneQuery);
+                                                    $PendingpolicydoneData = DB::getInstance()->querySample($PendingpolicydoneQuery);
                                                     if (DB::getInstance()->checkRows($performance_query)) {
                                                         ?>
-                                                        <a style="color:blue; font-size: 20px;"><b><center>Students Performance For <?php echo $Subject_Name ?> <?php echo $Class_Name ?> </center></b></a>
+                                                        <a style="color:blue; font-size: 20px;"><b><center>Students Performance For <?php echo $Subject_Name ?> <?php echo $Exam_Name ?> <?php echo $Class_Name ?> </center></b></a>
                                                         <table id="example1" class="table table-bordered table-striped">
                                                             <thead>
                                                                 <tr>
@@ -121,7 +130,7 @@
                                                             </thead>
                                                             <tbody>
                                                                 <?php
-                                                                $overall_marks = DB::getInstance()->calculateSum("select Total_Marks from total_correct_answer where Subject_Id='$subject' ", 'Total_Marks');
+                                                                $overall_marks = DB::getInstance()->calculateSum("select Total_Marks from total_correct_answer where Exam_Id='$exam' ", 'Total_Marks');
 
                                                                 $no = 1;
                                                                 foreach ($performance_list as $staff_performance) {
@@ -141,8 +150,37 @@
                                                         </table>
                                                         <?php
                                                     } else {
-                                                        echo '<div class="alert alert-danger">No Results for ' . $Subject_Name . ' ' . $Class_Name . ' to display</div>';
+                                                        echo '<div class="alert alert-danger">No Results for ' . $Subject_Name . ' ' . $Exam_Name . ' ' . $Class_Name . ' to display</div>';
                                                     }
+                                                    ?>
+                                                        <div class="col-lg-12 table-bordered ">
+                                                            <div class="col-lg-6 table-bordered " style="color: blue;">pending</div>
+                                                    <div class="col-lg-6 table-bordered" style="color: blue">answered</div>
+                                                    <div class="col-lg-6 table-bordered">
+                                                        <?php
+                                                        $k = 1;
+                                                        foreach ($PendingpolicydoneData as $pendingPolicy) {
+                                                            ?>
+                                                            <div><?php echo $k . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$pendingPolicy->Staff_Id'", 'Staff_Name') ?></div> 
+                                                            <?php
+                                                            $k++;
+                                                        }
+                                                        ?>
+                                                    </div>
+
+                                                    <div class="col-lg-6 table-bordered"> <?php
+                                                        $i = 1;
+                                                        foreach ($PolicydoneData as $policydone) {
+                                                            ?>
+                                                            <div><?php echo $i . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$policydone->Staff_Id'", 'Staff_Name') ?></div>
+                                                            <?php
+                                                            $i++;
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                        </div>
+                                                    
+                                                    <?php
                                                 } else {
                                                     echo '<div class="alert alert-danger">No Results to display</div>';
                                                 }
@@ -160,14 +198,7 @@
             <?php include_once 'includes/footer.php'; ?>
             <!-- end footer -->
         </div>
-        <script>
-            var uniquequestion18Array = <?php echo json_encode($uniquequestion18Array); ?>;
-            var uniqueCategoriesData = <?php echo json_encode($uniqueCategoriesArray); ?>;
-            var uniquequestion119Array = <?php echo json_encode($uniquequestion119Array); ?>;
-            var generalquestionArray = <?php echo json_encode($generalquestionArray); ?>;
 
-
-        </script>
         <?php include_once 'includes/footer_js.php'; ?>
         <script type="text/javascript">
 

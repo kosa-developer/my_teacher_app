@@ -33,10 +33,8 @@
             <!-- start header -->
             <?php
             include_once 'includes/policy_header_menu.php';
-             $Subject_Name = DB::getInstance()->displayTableColumnValue("select Subject_Name from subject where Id='$subject'", "Subject_Name");
-            $Class_Name = DB::getInstance()->displayTableColumnValue("select Class_Name from class,staff where staff.Class_Id=class.Id and staff.Staff_Id='$staff_id'", "Class_Name");
-          
-            ?>
+
+              ?>
             <!-- end header -->
             <!-- start page container -->
 
@@ -54,27 +52,27 @@
                     <div class="row">
                         <div class="page-title center">welcome to Unsb online exam</div>
                         <div class="col-md-9">
-                             
+
                             <div class="card card-topline-green">
                                 <div class="card-head">
                                     <header>Notes FOR <?php echo $Subject_Name ?> <?php echo $Class_Name ?></header>
                                     <div class="actions panel_actions pull-right">
-                                    <a class="btn btn-primary" href="index.php?page=<?php echo "question_page" . '&code=' . $staff_code. '&subject=' . $subject; ?>"><i class="fa fa-eye"></i>Answer Questions</a>
+                                        <a class="btn btn-primary" href="index.php?page=<?php echo "question_page" . '&code=' . $staff_code . '&exam=' . $exam; ?>"><i class="fa fa-eye"></i>Answer Questions</a>
+                                    </div>
                                 </div>
-                                </div>
-                                
+
                                 <div class="card-body " id="bar-parent">
 
-                                   <?php echo DB::getInstance()->displayTableColumnValue("select Policy from child_protection_policy Where Subject_Id='$subject' order by Policy_Id desc limit 1", "Policy"); ?>
+                                    <?php echo DB::getInstance()->displayTableColumnValue("select Policy from child_protection_policy Where Subject_Id='$subject' order by Policy_Id desc limit 1", "Policy"); ?>
 
-                                      
+
                                 </div>
-                                 <form role="form" action="index.php?page=<?php echo "question_page". '&code=' . $staff_code. '&subject=' . $subject; ?>" method="POST" enctype="multipart/form-data">
-                                   
-                                     <div class="col-md-10">
-                                         <button type="submit" name="answer_questtions" class="btn btn-success pull-right" value="answer_questtions">Answer Questions</button>
-                                     </div> 
-                                 </form>
+                                <form role="form" action="index.php?page=<?php echo "question_page" . '&code=' . $staff_code . '&exam=' . $exam; ?>" method="POST" enctype="multipart/form-data">
+
+                                    <div class="col-md-10">
+                                        <button type="submit" name="answer_questtions" class="btn btn-success pull-right" value="answer_questtions">Answer Questions</button>
+                                    </div> 
+                                </form>
                             </div>
                         </div>
                     </div>

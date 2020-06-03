@@ -33,8 +33,6 @@
             <!-- start header -->
             <?php
             include_once 'includes/policy_header_menu.php';
-            $Subject_Name = DB::getInstance()->displayTableColumnValue("select Subject_Name from subject where Id='$subject'", "Subject_Name");
-            $Class_Name = DB::getInstance()->displayTableColumnValue("select Class_Name from class,staff where staff.Class_Id=class.Id and staff.Staff_Id='$staff_id'", "Class_Name");
             ?>
             <!-- end header -->
             <!-- start page container -->
@@ -55,23 +53,23 @@
                         <div class="col-md-10 ">
                             <div class="card card-topline-green">
                                 <div class="card-head">
-                                    <header>EXAM FOR <?php echo $Subject_Name ?> <?php echo $Class_Name ?> </header>
+                                    <header>EXAM FOR <?php echo $Subject_Name ?> <?php echo $exam_name ?> <?php echo $Class_Name ?> </header>
                                     <div class="actions panel_actions pull-right">
-                                        <a class="btn btn-primary" href="index.php?page=<?php echo "policy_document_page" . '&code=' . $staff_code . '&subject=' . $subject; ?>"><i class="fa fa-eye"></i>View notes</a>
+                                        <a class="btn btn-primary" href="index.php?page=<?php echo "policy_document_page" . '&code=' . $staff_code . '&exam=' . $exam; ?>"><i class="fa fa-eye"></i>View notes</a>
                                     </div>
                                 </div>
                                 <div class="card-body " id="bar-parent">
 
                                     <?php
                                     $current_date = date('Y-m-d');
-                                    if (!DB::getInstance()->checkRows("SELECT * FROM marking_schedule WHERE  Subject_Id='$subject' AND Status=1")) {
+                                    if (!DB::getInstance()->checkRows("SELECT * FROM marking_schedule WHERE  Exam_Id='$exam' AND Status=1")) {
                                         echo '<div class="alert alert-warning">Deadline not yet set</div>';
                                     } else {
 
-                                        $time_left = DB::getInstance()->displayTableColumnValue("SELECT DATEDIFF(Date,'$current_date') AS date_left from marking_schedule where Subject_Id='$subject'", 'date_left');
+                                        $time_left = DB::getInstance()->displayTableColumnValue("SELECT DATEDIFF(Date,'$current_date') AS date_left from marking_schedule where Exam_Id='$exam'", 'date_left');
 
                                         if (Input::exists() && Input::get("submit_policy") == "submit_policy") {
-                                            DB::getInstance()->query("UPDATE policy_codes SET Status=0 WHERE Code='$staff_code' and Subject_Id='$subject'");
+                                            DB::getInstance()->query("UPDATE policy_codes SET Status=0 WHERE Code='$staff_code' and Exam_Id='$exam'");
 
                                             echo '<div class="alert alert-success">Test answers have been submitted successfully</div>';
                                             if ($time_left > 0) {
@@ -81,7 +79,7 @@
                                                 include_once 'pages/policy/marking_guide.php';
                                             }
                                         }
-                                        if (!DB::getInstance()->checkRows("SELECT * FROM policy_codes WHERE Code='$staff_code' and Subject_Id='$subject' AND Status=1")) {
+                                        if (!DB::getInstance()->checkRows("SELECT * FROM policy_codes WHERE Code='$staff_code' and Exam_Id='$exam' AND Status=1")) {
                                             if (!isset($_POST['submit_policy'])) {
                                                 echo '<div class="alert alert-danger">You have already participated in this assessment</div>';
                                                 if ($time_left > 0) {
@@ -95,7 +93,7 @@
                                             ?>
 
                                             <?php
-                                            $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Subject_Id="' . $subject . '" ORDER BY Question_Id  ' . $limit;
+                                            $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Exam_Id="' . $exam . '" ORDER BY Question_Id  ' . $limit;
                                             if ($time_left <= 0) {
                                                 echo '<div class="alert alert-danger">Deadline has passed. Try another link</div>';
                                             } else {
@@ -118,19 +116,19 @@
                                                                 </div>
                                                                 <div class='col-md-1'> 
                                                                     <div class='form-group'>
-                        <?php if ($questionx->Choice > 1) { ?>
+                                                                        <?php if ($questionx->Choice > 1) { ?>
                                                                             <div class='checkbox checkbox-icon-black'>
 
-                                                                                <input id='<?php echo $answerx->Answer_Id; ?>' type='checkbox' value='<?php echo $answerx->Answer_Id; ?>' onchange="check(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $subject ?>')">
+                                                                                <input id='<?php echo $answerx->Answer_Id; ?>' type='checkbox' value='<?php echo $answerx->Answer_Id; ?>' onchange="check(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $exam ?>')">
 
                                                                             </div><?php } else {
-                            ?>
+                                                                            ?>
 
                                                                             <div class="radio">
-                                                                                <input type="radio" name="<?php echo $questionx->Question_Id; ?>" id="<?php echo $answerx->Answer_Id; ?>" value='<?php echo $answerx->Answer_Id; ?>' onchange="radio(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $subject; ?>')">
+                                                                                <input type="radio" name="<?php echo $questionx->Question_Id; ?>" id="<?php echo $answerx->Answer_Id; ?>" value='<?php echo $answerx->Answer_Id; ?>' onchange="radio(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $exam; ?>')">
 
                                                                             </div>
-                        <?php } ?>
+                                                                        <?php } ?>
                                                                     </div>
 
 
@@ -146,18 +144,17 @@
                                                 } else {
                                                     echo '<div class="alert alert-danger">No Question registered</div>';
                                                 }
-                                           
-                                            ?>
+                                                ?>
 
-                                        </div>
-                                        <form role="form" action="index.php?page=<?php echo "question_page" . '&code=' . $staff_code . '&subject=' . $subject; ?>" method="POST" enctype="multipart/form-data">
+                                            </div>
+                                            <form role="form" action="index.php?page=<?php echo "question_page" . '&code=' . $staff_code . '&exam=' . $exam; ?>" method="POST" enctype="multipart/form-data">
 
-                                            <div class="col-md-10">
-                                                <button type="submit" name="submit_policy" class="btn btn-success pull-right" value="submit_policy">Finish</button>
-                                            </div> 
-                                        </form>
-                                        <?php
-                                         }
+                                                <div class="col-md-10">
+                                                    <button type="submit" name="submit_policy" class="btn btn-success pull-right" value="submit_policy">Finish</button>
+                                                </div> 
+                                            </form>
+                                            <?php
+                                        }
                                     }
                                 }
                                 ?>
@@ -168,14 +165,14 @@
             </div>
         </div>
         <script type="text/javascript">
-            function check(answer_id, question_id, staff_id, choice, count, subject) {
+            function check(answer_id, question_id, staff_id, choice, count, exam) {
 
 
                 if (answer_id != '') {
                     $.ajax({
                         type: 'POST',
                         url: 'index.php?page=ajax_data',
-                        data: {question_id: question_id, answer: answer_id, type: "submit_policy_answer", staff_id: staff_id, choice: choice, subject: subject},
+                        data: {question_id: question_id, answer: answer_id, type: "submit_policy_answer", staff_id: staff_id, choice: choice, exam: exam},
                         success: function (html) {
                             if (document.getElementById(answer_id).checked == false) {
                                 $('#' + question_id + '_' + count + '_answer').attr({
@@ -195,13 +192,13 @@
             }
 
 
-            function radio(answer_id, question_id, staff_id, choice, count, subject) {
+            function radio(answer_id, question_id, staff_id, choice, count, exam) {
 
                 if (answer_id != '') {
                     $.ajax({
                         type: 'POST',
                         url: 'index.php?page=ajax_data',
-                        data: {question_id: question_id, answer: answer_id, type: "submit_policy_answer", staff_id: staff_id, choice: choice, subject: subject},
+                        data: {question_id: question_id, answer: answer_id, type: "submit_policy_answer", staff_id: staff_id, choice: choice, exam: exam},
                         success: function (html) {
                             for (i = 1; i <= 10; i++) {
                                 if (i != count) {
@@ -227,7 +224,7 @@
         <!-- end page content -->
         <!-- end page container -->
         <!-- start footer -->
-<?php include_once 'includes/footer.php'; ?>
+        <?php include_once 'includes/footer.php'; ?>
         <!-- end footer -->
         <!-- start js include path -->
         <script src="js/jquery.min.js" type="text/javascript"></script>
