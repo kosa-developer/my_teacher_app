@@ -439,7 +439,7 @@
                                                                     <select name="class" class="select2" id="subject_"style="width: 100%" onchange="returnexam(this.value, 'exam_data');" required>
                                                                         <option value="">Choose...</option>
                                                                         <?php
-                                                                        $qstn_list = DB::getInstance()->querySample("select * from subject where Class_Id='$class_id' and Status=1 ORDER BY Id");
+                                                                        $qstn_list = DB::getInstance()->querySample("select * from subject where  Status=1 ORDER BY Id");
                                                                         foreach ($qstn_list as $qtn):
                                                                             echo '<option value="' . $qtn->Id . '">' . $qtn->Subject_Name . '</option>';
                                                                         endforeach;
