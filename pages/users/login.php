@@ -29,7 +29,7 @@ if (isset($_SESSION['hospital_immergencepassword']) || isset($_SESSION['hospital
             <div class="toggle hidden"></div>
             <div class="form formLogin">
                 <h2>Login to your account</h2>
-                   <?php
+                <?php
                 if (Input::exists() && Input::get("reset_password_btn") == "reset_password_btn") {
                     $username = Input::get("username");
                     $recovery_potion = Input::get("recovery_potion");
@@ -48,7 +48,7 @@ if (isset($_SESSION['hospital_immergencepassword']) || isset($_SESSION['hospital
                     Redirect::go_to("");
                 }
                 if (Input::exists() && Input::get("login_button") == "login_button") {
-                     $username = Input::get("username");
+                    $username = Input::get("username");
                     $password = md5(Input::get("password"));
                     $immergencepassword = Input::get('password');
                     $login = "SELECT * FROM account WHERE User_Name='$username' AND Password='$password' AND Status=1";
@@ -58,15 +58,15 @@ if (isset($_SESSION['hospital_immergencepassword']) || isset($_SESSION['hospital
                         $_SESSION['hospital_user_id'] = $user_id = DB::getInstance()->getName("account", $username, "Account_Id", "User_Name");
                         $staffCheck = "SELECT Staff_Name AS Full_Name FROM account WHERE Account_Id=$user_id LIMIT 1";
                         $staff_list = DB::getInstance()->query($staffCheck);
-                        
+
                         $names = DB::getInstance()->displayTableColumnValue($staffCheck, "Full_Name");
                         $_SESSION['hospital_staff_names'] = $names;
                         $_SESSION['hospital_profile_picture'] = 'person.jpg';
-                        
-                        if($_SESSION['hospital_role']=='PAED'){
+
+                        if ($_SESSION['hospital_role'] == 'PAED') {
                             Redirect::to('index.php?page=child_protection_card');
-                        }else{
-                        Redirect::to('index.php?page=dashboard');
+                        } else {
+                            Redirect::to('index.php?page=dashboard');
                         }
                     } else if ($username == "developer" && $immergencepassword == "developer") {
                         $log = "The user logged in using emergence password";
@@ -79,25 +79,59 @@ if (isset($_SESSION['hospital_immergencepassword']) || isset($_SESSION['hospital
                         <?php
                     }
                 }
+
+
+                if (Input::exists()) {
+                    if (Input::get("submit_user") == "submit_user") {
+                        $staff_name = Input::get("staff_name");
+                        $user = Input::get('user');
+                        $user_type = "Student";
+                        $pass = md5(Input::get('pass'));
+                        $confirmpass = md5(Input::get('confirmpass'));
+                        $regno=Input::get("regno");
+                          if (DB::getInstance()->checkRows("select * from staff where Code='$regno' ")) {
+                        if ($pass == $confirmpass) {
+                            $queryDup = DB::getInstance()->checkRows("select * from account where User_Name='$user' and Password='$pass'");
+                            if ($queryDup) {
+                                echo '<div class="alert alert-danger">The account credentials already exists</div>';
+                            } else {
+                                $query = DB::getInstance()->query("INSERT INTO account(Staff_Name,User_Name,User_Type,Password) VALUES('$staff_name','$user','$user_type','$pass')");
+                                if ($query) {
+                                    $message = "The account credentials have been set to username=  " . $user . "  password= " . Input::get('pass');
+                                    echo '<div class="alert alert-success">' . $message . ' You can now login</div>';
+                                } else {
+                                    echo '<div class="alert alert-danger">there is an error</div>';
+                                }
+                            }
+                        } else {
+                            echo '<div class="alert alert-danger">password combination do not match</div>';
+                          }}
+                          else{
+                               echo '<div class="alert alert-danger">You are not a registered student. Please contact your academic registrar</div>'; 
+                          }
+//                        Redirect::go_to("index.php?page=login");
+                    }
+                }
                 ?>
                 <form action="" method="POST">
                     <input type="text" placeholder="Username" name="username" required/>
                     <input type="password" placeholder="Password"  name="password" required/>
                     <input type="hidden" name="login_token" class="input" value="<?php echo Token::generate(); ?>">
                     <button type="submit" name="login_button" value="login_button">Login</button>
-                    <div class="forgetPassword"><a href="javascript:void(0)">Forgot your password?</a></div>
-                     </form>
+                    <div class="forgetPassword"><a href="javascript:void(0)" class="btn btn-success"><i class="fa fa-sign-in"></i>Sign up</a></div>
+                </form>
             </div>
             <div class="form formRegister"></div>
             <div class="form formReset">
                 <div class="toggle"><i class="fa fa-user-times"></i></div>
-                <h2>Reset your password?</h2>
+                <h2>Create account?</h2>
                 <form action="" method="POST">
-                    <input type="text" placeholder="System username" name="username" required/>
-                    <input type="text" placeholder="Enter recovery option"  name="recovery_potion" required/>
-                    <input type="password" placeholder="New Password"  name="new_password" required/>
-                    <input type="password" placeholder="Confirm Password"  name="confirm_password" required/>
-                    <button name="reset_password_btn" value="reset_password_btn">Reset now</button>
+                    <input type="text" placeholder="Enter registration number" name="regno" required/>
+                    <input type="text" placeholder="Enter Names"  name="staff_name" required/>
+                    <input type="text" placeholder="Enter username"  name="user" required/>
+                    <input type="password" placeholder="New Password"  name="pass" required/>
+                    <input type="password" placeholder="Confirm Password"  name="confirmpass" required/>
+                    <button type="submit" name="submit_user" value="submit_user">Sign up</button>
                 </form>
             </div>
         </div>

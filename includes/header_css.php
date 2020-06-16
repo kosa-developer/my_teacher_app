@@ -24,7 +24,7 @@
 <!-- data tables -->
 <link href="js/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 <!-- favicon -->
-<link rel="shortcut icon" href="assets/images/favicon.png" /> 
+<link rel="shortcut icon" href="img/nursing.jpg" /> 
 <link href="js/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" type="text/css" />
 <link href="js/bootstrap-editable/inputs-ext/address/address.css" rel="stylesheet" type="text/css" />
  <link href="js/summernote/summernote.css" rel="stylesheet">

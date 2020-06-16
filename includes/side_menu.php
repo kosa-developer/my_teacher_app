@@ -30,47 +30,76 @@ $_SESSION["PREVIOUS_URL"] = $_SERVER["REQUEST_URI"];
                         <span class="title">Dashboard</span>
                     </a>
                 </li>
+                <?php
+                if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Student")) && !isset($_SESSION['immergencepassword'])) {
+                    
+                } else {
+                    ?>
+                    <li class="nav-item"> 
+                        <a href="javascript:;" class="nav-link nav-toggle"><i class="fa fa-gear"></i>
+                            <span class="title">Settings</span><span class="arrow "></span>
+                        </a>
+                        <ul class="sub-menu" >
+                            <li class="nav-item">
+                                <a href="index.php?page=system_email" >System email</a>
+                            </li>
 
-                <li class="nav-item"> 
-                    <a href="javascript:;" class="nav-link nav-toggle"><i class="fa fa-gear"></i>
-                        <span class="title">Settings</span><span class="arrow "></span>
-                    </a>
-                    <ul class="sub-menu" >
-                        <li class="nav-item">
-                            <a href="index.php?page=system_email" >System email</a>
-                        </li>
-                        <?php
-                        if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Human Resource" && $_SESSION['hospital_role'] == "PAED")) && !isset($_SESSION['immergencepassword'])) {
-                            
-                        } else {
-                            ?>
                             <li class="nav-item">
                                 <a href="index.php?page=class&mode=register" >Register Class(es)</a>
                             </li>
-                           
-                           
-                              <li class="nav-item">
+
+
+                            <li class="nav-item">
                                 <a href="index.php?page=subject&mode=register" >Register Subject(s)</a>
                             </li>
-                           
-                             <li class="nav-item">
+
+                            <li class="nav-item">
                                 <a href="index.php?page=policy_document&mode=register" >Upload Reading material</a>
                             </li>
-                            
+
                             <li class="nav-item">
                                 <a href="index.php?page=policy_questions&mode=register" >Register Questions</a>
                             </li>
                             <li class="nav-item">
                                 <a href="index.php?page=policy_answer&mode=register" >Register Answers to questions</a>
                             </li>
-                             <li class="nav-item">
+                            <li class="nav-item">
                                 <a href="index.php?page=marking_dates&mode=register" >Set deadline</a>
                             </li>
+
+                        </ul>
+                    </li>
+                <?php } ?>
+                <li class="nav-item"> 
+                    <a href="javascript:;" class="nav-link nav-toggle"><i class="fa fa-book"></i>
+                        <span class="title">Courses and notes</span><span class="arrow "></span>
+                    </a>
+                    <ul class="sub-menu" >
+                        <?php
+                        if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Student")) && !isset($_SESSION['immergencepassword'])) {
+                            
+                        } else {
+                            ?>
+                            <li class="nav-item">
+                                <a href="index.php?page=courses&mode=register" >Register Courses</a>
+                            </li>
+
+
+                            <li class="nav-item">
+                                <a href="index.php?page=course_unit&mode=register" >Register Course units</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="index.php?page=notes" >Upload Notes</a>
+                            </li>
                         <?php } ?>
+                        <li class="nav-item">
+                            <a href="index.php?page=view_notes" >Notes available</a>
+                        </li>
                     </ul>
                 </li>
-
-                <?php if (isset($_SESSION['hospital_role']) && $_SESSION['hospital_role'] == "PAED") {
+                <?php
+                if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Student")) && !isset($_SESSION['immergencepassword'])) {
                     
                 } else {
                     ?>
@@ -90,12 +119,10 @@ $_SESSION["PREVIOUS_URL"] = $_SERVER["REQUEST_URI"];
 
                         </ul>
                     </li> 
+                <?php } ?>
 
-
-
-                    <?php
-                }
-                if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Human Resource" || $_SESSION['hospital_role'] == "Staff" || $_SESSION['hospital_role'] == "PAED")) && !isset($_SESSION['immergencepassword'])) {
+                <?php
+                if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Student" || $_SESSION['hospital_role'] == "Staff")) && !isset($_SESSION['immergencepassword'])) {
                     
                 } else {
                     ?>
@@ -111,10 +138,9 @@ $_SESSION["PREVIOUS_URL"] = $_SERVER["REQUEST_URI"];
                                 <a href="index.php?page=view_users" >All Users</a>
                             </li>
                         </ul>
-                    </li><?php
-                }
-                ?>
+                    </li>
 
+                <?php } ?>
                 <li class="nav-item">
                     <a href="index.php?page=logout">
                         <i class="fa fa-power-off"></i>

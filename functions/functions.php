@@ -33,7 +33,7 @@ function send_exam($staff_id, $email, $user, $code, $system_email, $system_email
                 . 'Hope you are doing well.<br/>'
                 . 'An assessment for <b>'.$Class_Name.' '.$Subject_Name.' '.$exam_name.' </b>is ready for you<br/>'
                 . 'Please follow the link below, read the notes provided and answer the questions as follows. <br/>'
-                . 'https://myteacher.unsbwindi.ac.ug/index.php?page=policy_document_page&code=' . $code[$i] . '&exam=' . $exam_id . '<br/>'
+                . 'https://myteacher.unsbwindi.ac.ug/index.php?page=question_page&code=' . $code[$i] . '&exam=' . $exam_id . '<br/>'
                 . 'Thanks.<br/>'
                 . 'Best regards.<br/>'
                 . 'Academic Registrar UNSB.';
@@ -78,7 +78,7 @@ function send_policy_Email($staff_id, $email, $user, $code, $system_email, $syst
     $mail->Body = 'Hello ' . $user . ' ,<br/>'
             . 'Hope you are doing well.<br/>'
             . 'Please follow the link below, read the document and answer the questions provided. <br/>'
-            . 'http://127.0.0.1:81/myteacher_app/index.php?page=policy_document_page&code=' . $code . '&subject=' . $subject . '<br/>'
+            . 'http://127.0.0.1:81/myteacher_app/index.php?page=question_page&code=' . $code . '&subject=' . $subject . '<br/>'
             . 'Thanks.<br/>'
             . 'Best regards.<br/>'
             . 'Head of nursing and Midwifery services.<br/>'

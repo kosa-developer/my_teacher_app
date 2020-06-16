@@ -25,7 +25,11 @@
         <link href="css/theme-color.css" rel="stylesheet" type="text/css" />
 
         <!-- favicon -->
-        <link rel="shortcut icon" href="assets/images/favicon.png" /> 
+        <link rel="shortcut icon" href="img/nursing.jpg" /> 
+        
+        <style type="text/css">
+            #content{ background-image:url('img/presentation.jpg');}
+        </style>
     </head>
     <!-- END HEAD -->
     <body class="page-header-fixed sidemenu-closed-hidelogo page-content-white page-full-width page-md header-blue">
@@ -40,7 +44,7 @@
             <!-- end sidebar menu --> 
             <!-- start page content -->
             <div class="page-content-wrapper">
-                <div class="page-content">
+                <div class="page-content" id="content">
                     <div class="page-bar">
                         <div class="page-title-breadcrumb">
                             <div class=" pull-left">
@@ -54,9 +58,7 @@
                             <div class="card card-topline-green">
                                 <div class="card-head">
                                     <header>EXAM FOR <?php echo $Subject_Name ?> <?php echo $exam_name ?> <?php echo $Class_Name ?> </header>
-                                    <div class="actions panel_actions pull-right">
-                                        <a class="btn btn-primary" href="index.php?page=<?php echo "policy_document_page" . '&code=' . $staff_code . '&exam=' . $exam; ?>"><i class="fa fa-eye"></i>View notes</a>
-                                    </div>
+                                   
                                 </div>
                                 <div class="card-body " id="bar-parent">
 

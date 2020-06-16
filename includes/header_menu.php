@@ -45,7 +45,12 @@ if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Staff"
         <div class="top-menu">
             <ul class="nav navbar-nav pull-right">
                 <!-- start notification dropdown -->
-      <li class="dropdown dropdown-extended dropdown-notification <?php echo $hidden1?>" id="header_notification_bar">
+       <?php
+                        if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Student")) && !isset($_SESSION['immergencepassword'])) {
+                            
+                        } else {
+                            ?>
+                <li class="dropdown dropdown-extended dropdown-notification <?php echo $hidden1?>" id="header_notification_bar">
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                         <i class="fa fa-bell-o"></i>
                         <span class="badge orange-bgcolor"><?php echo DB::getInstance()->countElements("select * from policy_codes"); ?></span>
@@ -94,7 +99,7 @@ if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Staff"
                         </li>
                     </ul>
                 </li>
-               
+                        <?php }?>
 
                 <!-- end notification dropdown -->
                 <!-- start manage user dropdown -->
@@ -128,15 +133,15 @@ if (Input::exists() && Input::get("edit_my_account") == "edit_my_account") {
     $user_id = $_SESSION['hospital_user_id'];
     $user = $_SESSION['hospital_username'];
     $username = Input::get("username");
-    $old_password = sha1(Input::get('old_password'));
-    $new_password = sha1(Input::get('new_password'));
-    $queryUpdateUser = DB::getInstance()->checkRows("select * from user where  Username='$user' AND Password='$old_password'");
+    $old_password = md5(Input::get('old_password'));
+    $new_password = md5(Input::get('new_password'));
+    $queryUpdateUser = DB::getInstance()->checkRows("select * from account where  User_Name='$user' AND Password='$old_password'");
     if ($queryUpdateUser) {
-        $queryUpdateCheck = DB::getInstance()->checkRows("select * from user where User_Id!='$user_id' AND Username='$username'");
+        $queryUpdateCheck = DB::getInstance()->checkRows("select * from account where Account_Id!='$user_id' AND User_Name='$username'");
         if ($queryUpdateCheck) {
             $message = "The username entered is already used by another person";
         } else {
-            $queryUpdate = DB::getInstance()->query("update  user set Password='$new_password',Username='$username' where  Username='$user'");
+            $queryUpdate = DB::getInstance()->query("update  account set Password='$new_password',User_Name='$username' where  User_Name='$user'");
             if ($queryUpdate) {
                 $message = "Your account user credentials have been changed successfully";
                 $_SESSION['hospital_username'] = $username;

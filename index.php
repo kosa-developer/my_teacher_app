@@ -64,6 +64,28 @@ switch ($page) {
         if (file_exists('pages/staff/' . $page . '.php'))
             include 'pages/staff/' . $page . '.php';
         break;
+        
+          case 'courses':
+        if (file_exists('pages/courses/' . $page . '.php'))
+            include 'pages/courses/' . $page . '.php';
+        break;
+        
+        
+          case 'course_unit':
+        if (file_exists('pages/courses/' . $page . '.php'))
+            include 'pages/courses/' . $page . '.php';
+        break;
+        
+        
+          case 'notes':
+        if (file_exists('pages/courses/' . $page . '.php'))
+            include 'pages/courses/' . $page . '.php';
+        break;
+        
+            case 'view_notes':
+        if (file_exists('pages/courses/' . $page . '.php'))
+            include 'pages/courses/' . $page . '.php';
+        break;
 
 
 

@@ -453,4 +453,37 @@
             $('#' + return_id).html('');
         }
     }
+    
+    function returncourse(course_id, return_id) {
+        
+         if (course_id != '') {
+            $.ajax({
+                type: 'POST',
+                url: 'index.php?page=ajax_data',
+                data: {course: course_id},
+                success: function (html) {
+                    $('#' + return_id).html(html);
+
+                }
+            });
+        } else {
+            $('#' + return_id).html('');
+        }
+    }
+    
+    function searchcourse(courseunit,return_id){
+        if (courseunit != '') {
+         $.ajax({
+                type: 'POST',
+                url: 'index.php?page=ajax_data',
+                data: {course_unit: courseunit,action:'retrievedata'},
+                success: function (html) {
+                    $('#' + return_id).html(html);
+
+                }
+            });
+        } else {
+            $('#' + return_id).html('<h1>No data to display</h1>');
+        }
+    }
 </script>
