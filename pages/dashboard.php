@@ -108,6 +108,8 @@
                                                         <div class="box-footer col-md-3">
                                                             <br/>
                                                             <button type="submit"  name="search" value="search" class="btn btn-success fa fa-search pull-right">search</button>
+                                                            <br/>
+                                                            <br/>
                                                         </div>
                                                     </form>
 
