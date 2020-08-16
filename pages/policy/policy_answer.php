@@ -69,6 +69,7 @@
                                             $log = $_SESSION['hospital_staff_names'] . "  registered a new child protection answer :";
                                             DB::getInstance()->logs($log);
                                         } else {
+                                            DB::getInstance()->query("UPDATE policy_answers SET Status=1 where Answer='$answer[$i]' AND Question_Id='$question' ");
                                             $duplicate++;
                                         }
                                     }
@@ -77,7 +78,7 @@
                                         echo '<div class="alert alert-success">' . $submited . ' Answers to ' . $qtnz . ' submitted successfully</div>';
                                     }
                                     if ($duplicate > 0) {
-                                        echo '<div class="alert alert-warning">' . $duplicate . ' answers already exisits</div>';
+                                        echo '<div class="alert alert-warning">' . $duplicate . ' answers already exisits but now active</div>';
                                     }
                                     Redirect::go_to("index.php?page=policy_answer&mode=" . $mode);
                                 }

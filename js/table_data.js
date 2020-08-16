@@ -9,7 +9,7 @@ $(document).ready(function() {
 	'use strict';
     $('#example1').DataTable();
     
-    var table = $('#example2').DataTable( {
+    var table = $('#example4').DataTable( {
         "scrollY": "200px",
         "paging": false
     } );
@@ -42,6 +42,6 @@ $(document).ready(function() {
     // Automatically add a first row of data
     $('#addRow').click();
     
-    $('#example4').DataTable();
+    $('#example2').DataTable();
     
 } );

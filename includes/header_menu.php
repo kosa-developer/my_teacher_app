@@ -9,8 +9,8 @@ $previous_page = $_SESSION["PREVIOUS_URL"];
 $policydoneQuery = "select * from policy_codes where Status=0";
 $PendingpolicydoneQuery = "select * from policy_codes where Status=1";
 
-$PolicydoneData = DB::getInstance()->querySample($policydoneQuery);
-$PendingpolicydoneData = DB::getInstance()->querySample($PendingpolicydoneQuery);
+//$PolicydoneData = DB::getInstance()->querySample($policydoneQuery);
+//$PendingpolicydoneData = DB::getInstance()->querySample($PendingpolicydoneQuery);
 
 
 $hidden = "";
@@ -53,15 +53,15 @@ if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Staff"
                 <li class="dropdown dropdown-extended dropdown-notification <?php echo $hidden1?>" id="header_notification_bar">
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                         <i class="fa fa-bell-o"></i>
-                        <span class="badge orange-bgcolor"><?php echo DB::getInstance()->countElements("select * from policy_codes"); ?></span>
+                        <span class="badge orange-bgcolor"><?php // echo DB::getInstance()->countElements("select * from policy_codes"); ?></span>
                     </a>     
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu  hidden">
                         <li class="external ">
                             <h3><span class="bold">Attendance</span></h3>
-                            <span class="notification-label purple-bgcolor"><?php echo DB::getInstance()->countElements("select * from policy_codes"); ?></span>
+                            <span class="notification-label purple-bgcolor"><?php // echo DB::getInstance()->countElements("select * from policy_codes"); ?></span>
                         </li>
                         <li>
-                            <ul class="dropdown-menu-list small-slimscroll-style" data-handle-color="#637283">
+                            <ul class="dropdown-menu-list small-slimscroll-style " data-handle-color="#637283">
                                 <li>
                                     <!--<a href="javascript:;">-->
 
@@ -69,24 +69,24 @@ if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Staff"
                                     <div class="col-lg-6 table-bordered" style="color: blue">answered</div>
                                     <div class="col-lg-6 table-bordered">
                                         <?php
-                                        $k = 1;
-                                        foreach ($PendingpolicydoneData as $pendingPolicy) {
+//                                        $k = 1;
+//                                        foreach ($PendingpolicydoneData as $pendingPolicy) {
                                             ?>
-                                            <div><?php echo $k . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$pendingPolicy->Staff_Id'", 'Staff_Name') ?></div> 
+                                            <div><?php // echo $k . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$pendingPolicy->Staff_Id'", 'Staff_Name') ?></div> 
                                             <?php
-                                            $k++;
-                                        }
+//                                            $k++;
+//                                        }
                                         ?>
                                     </div>
 
                                     <div class="col-lg-6 table-bordered"> <?php
-                                        $i = 1;
-                                        foreach ($PolicydoneData as $policydone) {
+//                                        $i = 1;
+//                                        foreach ($PolicydoneData as $policydone) {
                                             ?>
-                                            <div><?php echo $i . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$policydone->Staff_Id'", 'Staff_Name') ?></div>
+                                            <div><?php // echo $i . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$policydone->Staff_Id'", 'Staff_Name') ?></div>
                                             <?php
-                                            $i++;
-                                        }
+//                                            $i++;
+//                                        }
                                         ?>
                                     </div>
 

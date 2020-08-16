@@ -33,7 +33,8 @@
                     $exam = Input::get("exam");
                     $class = Input::get("class");
                     $subject = Input::get("subject");
-
+                    $performance_query = "SELECT * FROM staff_performance where Exam_Id='$exam' order by Staff_Performance desc";
+                    $performance_list = DB::getInstance()->querySample($performance_query);
                     $Exam_Name = DB::getInstance()->displayTableColumnValue("select Exam_Name from exam where Id='$exam'", "Exam_Name");
                     $Subject_Name = DB::getInstance()->displayTableColumnValue("select Subject_Name from subject where Id='$subject'", "Subject_Name");
                     $Class_Name = DB::getInstance()->displayTableColumnValue("select Class_Name from class where Id='$class'", "Class_Name");
@@ -41,7 +42,6 @@
 
                     $class_query = "select staff.Class_Id,class.Class_Name from staff,staff_performance,class where staff.Staff_Id=staff_performance.Staff_Id 
                         and class.Id=staff.Class_Id and staff_performance.Exam_Id='$exam' group by staff.Class_Id";
-                    $class_list = DB::getInstance()->querySample($class_query);
                 }
                 ?>
                 <!-- end sidebar menu --> 
@@ -124,93 +124,78 @@
                                                     <?php
                                                     if ((Input::exists() && Input::get("exam")) || isset($_GET['exam'])) {
 
+                                                        $policydoneQuery = "select * from policy_codes where Exam_Id='$exam' AND Status=0";
+                                                        $PendingpolicydoneQuery = "select * from policy_codes where Exam_Id='$exam' AND Status=1";
 
-                                                        if (DB::getInstance()->checkRows($class_query)) {
+                                                        $PolicydoneData = DB::getInstance()->querySample($policydoneQuery);
+                                                        $PendingpolicydoneData = DB::getInstance()->querySample($PendingpolicydoneQuery);
+                                                        if (DB::getInstance()->checkRows($performance_query)) {
                                                             ?>
-                                                            <a style="color:blue; font-size: 20px;"><b><center>Students Performance For <?php echo $Subject_Name ?> <?php echo $Exam_Name ?> </center></b></a>
-
-                                                            <?php
-                                                            $tableid = 1;
-                                                            foreach ($class_list as $class_retrieved) {
-
-                                                                $policydoneQuery = "select policy_codes.Staff_Id from policy_codes,staff where policy_codes.Staff_Id=staff.Staff_Id and staff.Class_Id='$class_retrieved->Class_Id' and policy_codes.Exam_Id='$exam' AND policy_codes.Status=0";
-                                                                $PendingpolicydoneQuery = "select policy_codes.Staff_Id from policy_codes,staff where policy_codes.Staff_Id=staff.Staff_Id and staff.Class_Id='$class_retrieved->Class_Id' and policy_codes.Exam_Id='$exam' AND policy_codes.Status=1";
-
-                                                                $PolicydoneData = DB::getInstance()->querySample($policydoneQuery);
-                                                                $PendingpolicydoneData = DB::getInstance()->querySample($PendingpolicydoneQuery);
-
-
-                                                                $performance_query = "SELECT staff_performance.Staff_Name,staff_performance.Staff_Performance FROM staff_performance,staff where staff.Staff_Id=staff_performance.Staff_Id and staff.Class_Id='$class_retrieved->Class_Id' and staff_performance.Exam_Id='$exam'  order by staff_performance.Staff_Performance desc";
-                                                                $performance_list = DB::getInstance()->querySample($performance_query);
-                                                                ?>
-                                                                <a style="color:blue; font-size: 20px;"><b><center><?php echo $class_retrieved->Class_Name ?> </center></b></a>
-                                                                <table id="example<?php echo $tableid ?>" class="table table-bordered table-striped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th >#</th>
-                                                                            <th >Students</th>
-                                                                            <th >Performance</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <?php
-                                                                        $overall_marks = DB::getInstance()->calculateSum("select Total_Marks from total_correct_answer where Exam_Id='$exam' ", 'Total_Marks');
-
-                                                                        $no = 1;
-                                                                        foreach ($performance_list as $staff_performance) {
-                                                                            ?>
-                                                                            <tr> 
-                                                                                <td><?php echo $no; ?></td>
-                                                                                <td><?php echo $staff_performance->Staff_Name; ?></td>
-                                                                                <td><?php echo $performance = round((($staff_performance->Staff_Performance / $overall_marks) * 100)); ?>%</td>
-
-                                                                            </tr>
-                                                                            <?php
-                                                                            $no++;
-                                                                        }
-                                                                        ?>
-                                                                    </tbody>
-
-                                                                </table>
-                                                                <?php
-                                                                $tableid++;
-                                                           
-                                                      
-                                                            ?>
-                                                            <div class="col-lg-12 table-bordered ">
-                                                                <a style="color:blue; font-size: 20px;"><b><center>Attendance for <?php echo $class_retrieved->Class_Name ?> </center></b></a>
-
-                                                                <div class="col-lg-6 table-bordered " style="color: blue;">pending</div>
-                                                                <div class="col-lg-6 table-bordered" style="color: blue">answered</div>
-                                                                <div class="col-lg-6 table-bordered">
+                                                            <a style="color:blue; font-size: 20px;"><b><center>Students Performance For <?php echo $Subject_Name ?> <?php echo $Exam_Name ?> <?php echo $Class_Name ?> </center></b></a>
+                                                            <table id="example1" class="table table-bordered table-striped">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th >#</th>
+                                                                        <th >Students</th>
+                                                                        <th >Performance</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
                                                                     <?php
-                                                                    $k = 1;
-                                                                    foreach ($PendingpolicydoneData as $pendingPolicy) {
-                                                                        ?>
-                                                                        <div><?php echo $k . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$pendingPolicy->Staff_Id'", 'Staff_Name') ?></div> 
-                                                                        <?php
-                                                                        $k++;
-                                                                    }
-                                                                    ?>
-                                                                </div>
+                                                                    $overall_marks = DB::getInstance()->calculateSum("select Total_Marks from total_correct_answer where Exam_Id='$exam' ", 'Total_Marks');
 
-                                                                <div class="col-lg-6 table-bordered"> <?php
-                                                        $i = 1;
-                                                        foreach ($PolicydoneData as $policydone) {
+                                                                    $no = 1;
+                                                                    foreach ($performance_list as $staff_performance) {
                                                                         ?>
-                                                                        <div><?php echo $i . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$policydone->Staff_Id'", 'Staff_Name') ?></div>
+                                                                        <tr> 
+                                                                            <td><?php echo $no; ?></td>
+                                                                            <td><?php echo $staff_performance->Staff_Name; ?></td>
+                                                                            <td><?php echo $performance = round((($staff_performance->Staff_Performance / $overall_marks) * 100)); ?>%</td>
+
+                                                                        </tr>
                                                                         <?php
-                                                                        $i++;
+                                                                        $no++;
                                                                     }
                                                                     ?>
-                                                                </div>
+                                                                </tbody>
+
+                                                            </table>
+                                                            <?php
+                                                        } else {
+                                                            echo '<div class="alert alert-danger">No Results for ' . $Subject_Name . ' ' . $Exam_Name . ' ' . $Class_Name . ' to display</div>';
+                                                        }
+                                                        ?>
+                                                        <div class="col-lg-12 table-bordered ">
+                                                            <div class="col-lg-6 table-bordered " style="color: blue;">pending</div>
+                                                            <div class="col-lg-6 table-bordered" style="color: blue">answered</div>
+                                                            <div class="col-lg-6 table-bordered">
+                                                                <?php
+                                                                $k = 1;
+                                                                foreach ($PendingpolicydoneData as $pendingPolicy) {
+                                                                    ?>
+                                                                    <div><?php echo $k . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$pendingPolicy->Staff_Id'", 'Staff_Name') ?></div> 
+                                                                    <?php
+                                                                    $k++;
+                                                                }
+                                                                ?>
                                                             </div>
 
-                                                            <?php
-                                                       
-                                                            } } else {
+                                                            <div class="col-lg-6 table-bordered"> <?php
+                                                                $i = 1;
+                                                                foreach ($PolicydoneData as $policydone) {
+                                                                    ?>
+                                                                    <div><?php echo $i . ". " . DB::getInstance()->displayTableColumnValue("select Staff_Name from staff where Staff_Id='$policydone->Staff_Id'", 'Staff_Name') ?></div>
+                                                                    <?php
+                                                                    $i++;
+                                                                }
+                                                                ?>
+                                                            </div>
+                                                        </div>
+
+                                                        <?php
+                                                    } else {
                                                         echo '<div class="alert alert-danger">No Results to display</div>';
-                                                    }}
+                                                    }
                                                     ?>
                                                 </div>
                                             </div>

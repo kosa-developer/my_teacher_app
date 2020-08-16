@@ -48,7 +48,7 @@
                         </div>
                         <div class="row">
 
-                            <div class="col-md-12" <?php echo $hidden; ?>>
+                            <div class="col-md-12" >
                                 <?php
                                 if (Input::exists() && Input::get("submit_notes") == "submit_notes") {
 
@@ -106,7 +106,7 @@
                                                     <select name="course" class="select2" style="width: 100%" onchange="returncourse(this.value, 'courseDiv');" required>
                                                         <option value="">Choose...</option>
                                                         <?php
-                                                        $qstn_list = DB::getInstance()->querySample("select * from courses ORDER BY Id");
+                                                        $qstn_list = DB::getInstance()->querySample("select * from courses where Status=1 ORDER BY Id");
                                                         foreach ($qstn_list as $qtn):
                                                             echo '<option value="' . $qtn->Id . '">' . $qtn->Course_Name . '</option>';
                                                         endforeach;
