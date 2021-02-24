@@ -39,8 +39,8 @@
                     $Class_Name = DB::getInstance()->displayTableColumnValue("select Class_Name from class where Id='$class'", "Class_Name");
 
 
-                    $class_query = "select staff.Class_Id,class.Class_Name from staff,staff_performance,class where staff.Staff_Id=staff_performance.Staff_Id 
-                        and class.Id=staff.Class_Id and staff_performance.Exam_Id='$exam' group by staff.Class_Id";
+                    $class_query = "select staff.Class_Id,class.Class_Name from staff,policy_codes,class where staff.Staff_Id=policy_codes.Staff_Id 
+                        and class.Id=staff.Class_Id and policy_codes.Exam_Id='$exam' group by staff.Class_Id";
                     $class_list = DB::getInstance()->querySample($class_query);
                 }
                 ?>

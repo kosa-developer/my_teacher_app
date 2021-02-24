@@ -2,6 +2,11 @@
 <link href="js/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
 
 <?php
+if (isset($_POST["type"]) && $_POST['type'] == "submit_policy") {
+    $staff_code = Input::get("staff_code");
+    $exam = Input::get("Exam_Id");
+    DB::getInstance()->query("UPDATE policy_codes SET Status=0 WHERE Code='$staff_code' and Exam_Id='$exam'");
+}
 if (isset($_POST["submit_text"]) && $_POST['submit_text'] == "policy") {
     $subject = Input::get("subject");
     $staff_id = Input::get("staff_id");
@@ -177,10 +182,10 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                 <header><?php echo DB::getInstance()->displayTableColumnValue("select Course_unit from course_unit where Id='$course_id' ", "Course_unit"); ?>   Year 1 Notes</header>
                             </div>
                             <div class="card-body " id="bar-parent"> 
-    <?php
-    $query = "select * from notes WHERE course_unit_id='$course_id' and Status=1 and Year='YEAR 1'";
-    if (DB::getInstance()->checkRows($query)) {
-        ?>
+                                <?php
+                                $query = "select * from notes WHERE course_unit_id='$course_id' and Status=1 and Year='YEAR 1'";
+                                if (DB::getInstance()->checkRows($query)) {
+                                    ?>
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
@@ -189,18 +194,18 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                                 <th >Description</th>
                                                 <th >Download</th>
                                                 <?php
-            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
-                ?>
-                                        <th >delete</th>
-            <?php }?>
-                                     
+                                                if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
+                                                    ?>
+                                                    <th >delete</th>
+                                                <?php } ?>
+
                                             </tr>
                                         </thead>
-        <?php
-        $exam_query = DB::getInstance()->query($query);
-        $no = 1;
-        foreach ($exam_query->results() as $notes) {
-            ?>
+                                        <?php
+                                        $exam_query = DB::getInstance()->query($query);
+                                        $no = 1;
+                                        foreach ($exam_query->results() as $notes) {
+                                            ?>
 
                                             <tbody>
                                             <td><?php echo $no; ?></td>
@@ -208,36 +213,36 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                             <td><?php echo $notes->Description; ?></td>
                                             <td><a  target="_blank" href="file_uploads/<?php echo $notes->file; ?>"><i class="fa fa-download"></i></a></td>
 
-            <?php
-            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
-                ?>
+                                            <?php
+                                            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
+                                                ?>
                                                 <td><a href="index.php?page=<?php echo "view_notes" . '&action=delete&Id=' . $notes->Id; ?>" onclick="return confirm('Are you sure you want to delete <?php echo $notes->file; ?>?');">Delete</a></td>
                                             <?php } ?>
                                             </tbody>
 
 
-            <?php
-            $no++;
-        }
-        ?>
+                                            <?php
+                                            $no++;
+                                        }
+                                        ?>
 
                                         <tfoot>
                                         <th style="width: 1%;">#</th>
                                         <th >File Name</th>
                                         <th >Description</th>
                                         <th >Download</th>
-                                          <?php
-            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
-                ?>
-                                        <th >delete</th>
-            <?php }?>
-                                     
+                                        <?php
+                                        if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
+                                            ?>
+                                            <th >delete</th>
+                                        <?php } ?>
+
                                         </tfoot>
                                     </table><?php
-                            } else {
-                                echo '<div class="alert alert-danger">No upload yet</div>';
-                            }
-    ?>  </div></div>
+                                } else {
+                                    echo '<div class="alert alert-danger">No upload yet</div>';
+                                }
+                                ?>  </div></div>
 
                     </div>
                     <!-- /.tab-pane -->
@@ -248,10 +253,10 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                 <header><?php echo DB::getInstance()->displayTableColumnValue("select Course_unit from course_unit where Id='$course_id' ", "Course_unit"); ?>   Year 2 Notes</header>
                             </div>
                             <div class="card-body " id="bar-parent"> 
-    <?php
-    $query = "select * from notes WHERE course_unit_id='$course_id' and Status=1 and Year='YEAR 2'";
-    if (DB::getInstance()->checkRows($query)) {
-        ?>
+                                <?php
+                                $query = "select * from notes WHERE course_unit_id='$course_id' and Status=1 and Year='YEAR 2'";
+                                if (DB::getInstance()->checkRows($query)) {
+                                    ?>
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
@@ -259,18 +264,18 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                                 <th >File Name</th>
                                                 <th >Description</th>
                                                 <th >Download</th> <?php
-                            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
-                                ?>
+                                                if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
+                                                    ?>
                                                     <td><a href="index.php?page=<?php echo "view_notes" . '&action=delete&Id=' . $notes->Id; ?>" onclick="return confirm('Are you sure you want to delete <?php echo $notes->file; ?>?');">Delete</a></td>
                                                 <?php } ?>
                                                 <th >delete</th>
                                             </tr>
                                         </thead>
-                                                <?php
-                                                $exam_query = DB::getInstance()->query($query);
-                                                $no = 1;
-                                                foreach ($exam_query->results() as $notes) {
-                                                    ?>
+                                        <?php
+                                        $exam_query = DB::getInstance()->query($query);
+                                        $no = 1;
+                                        foreach ($exam_query->results() as $notes) {
+                                            ?>
 
                                             <tbody>
                                             <td><?php echo $no; ?></td>
@@ -278,9 +283,9 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                             <td><?php echo $notes->Description; ?></td>
                                             <td><a  target="_blank" href="file_uploads/<?php echo $notes->file; ?>"><i class="fa fa-download"></i></a></td>
 
-            <?php
-            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
-                ?>
+                                            <?php
+                                            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
+                                                ?>
                                                 <td><a href="index.php?page=<?php echo "view_notes" . '&action=delete&Id=' . $notes->Id; ?>" onclick="return confirm('Are you sure you want to delete <?php echo $notes->file; ?>?');">Delete</a></td>
                                             <?php } ?>
                                             </tbody>
@@ -296,18 +301,18 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                         <th >File Name</th>
                                         <th >Description</th>
                                         <th >Download</th>
-                                         <?php
-            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
-                ?>
-                                        <th >delete</th>
-            <?php }?>
-                                     
+                                        <?php
+                                        if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
+                                            ?>
+                                            <th >delete</th>
+                                        <?php } ?>
+
                                         </tfoot>
                                     </table><?php
-                                    } else {
-                                        echo '<div class="alert alert-danger">No upload yet</div>';
-                                    }
-                                    ?>  </div></div>
+                                } else {
+                                    echo '<div class="alert alert-danger">No upload yet</div>';
+                                }
+                                ?>  </div></div>
 
                     </div>
                     <!-- /.tab-pane -->
@@ -317,10 +322,10 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                 <header><?php echo DB::getInstance()->displayTableColumnValue("select Course_unit from course_unit where Id='$course_id' ", "Course_unit"); ?>   Year 3 Notes</header>
                             </div>
                             <div class="card-body " id="bar-parent"> 
-    <?php
-    $query = "select * from notes WHERE course_unit_id='$course_id' and Status=1 and Year='YEAR 3'";
-    if (DB::getInstance()->checkRows($query)) {
-        ?>
+                                <?php
+                                $query = "select * from notes WHERE course_unit_id='$course_id' and Status=1 and Year='YEAR 3'";
+                                if (DB::getInstance()->checkRows($query)) {
+                                    ?>
                                     <table id="example1" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
@@ -328,28 +333,28 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                                 <th >File Name</th>
                                                 <th >Description</th>
                                                 <th >Download</th>
-                                              <?php
-            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
-                ?>
-                                        <th >delete</th>
-            <?php }?>
-                                     
+                                                <?php
+                                                if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
+                                                    ?>
+                                                    <th >delete</th>
+                                                <?php } ?>
+
                                             </tr>
                                         </thead>
-        <?php
-        $exam_query = DB::getInstance()->query($query);
-        $no = 1;
-        foreach ($exam_query->results() as $notes) {
-            ?>
+                                        <?php
+                                        $exam_query = DB::getInstance()->query($query);
+                                        $no = 1;
+                                        foreach ($exam_query->results() as $notes) {
+                                            ?>
 
                                             <tbody>
                                             <td><?php echo $no; ?></td>
                                             <td><?php echo $notes->file; ?></td>
                                             <td><?php echo $notes->Description; ?></td>
                                             <td><a  target="_blank" href="file_uploads/<?php echo $notes->file; ?>"><i class="fa fa-download"></i></a></td>
-            <?php
-            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
-                ?>
+                                            <?php
+                                            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
+                                                ?>
                                                 <td><a href="index.php?page=<?php echo "view_notes" . '&action=delete&Id=' . $notes->Id; ?>" onclick="return confirm('Are you sure you want to delete <?php echo $notes->file; ?>?');">Delete</a></td>
                                             <?php } ?>
                                             </tbody>
@@ -365,17 +370,17 @@ if (isset($_POST["action"]) && !empty($_POST["course_unit"])) {
                                         <th >File Name</th>
                                         <th >Description</th>
                                         <th >Download</th>
-                                         <?php
-            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
-                ?>
-                                        <th >delete</th>
-            <?php }?>
+                                        <?php
+                                        if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Admin")) || isset($_SESSION['immergencepassword'])) {
+                                            ?>
+                                            <th >delete</th>
+                                        <?php } ?>
                                         </tfoot>
                                     </table><?php
-                                    } else {
-                                        echo '<div class="alert alert-danger">No upload yet</div>';
-                                    }
-                                    ?>  </div></div>
+                                } else {
+                                    echo '<div class="alert alert-danger">No upload yet</div>';
+                                }
+                                ?>  </div></div>
 
                         <!-- /.tab-pane -->
                     </div>

@@ -25,6 +25,7 @@
 
 <!-- bootstrap -->
 <script src="js/summernote/summernote.js" type="text/javascript"></script>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $('#summernote').summernote();

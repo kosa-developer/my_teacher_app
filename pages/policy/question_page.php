@@ -26,7 +26,7 @@
 
         <!-- favicon -->
         <link rel="shortcut icon" href="img/nursing.jpg" /> 
-        
+
         <style type="text/css">
             #content{ background-image:url('img/presentation.jpg');}
         </style>
@@ -58,9 +58,24 @@
                             <div class="card card-topline-green">
                                 <div class="card-head">
                                     <header>EXAM FOR <?php echo $Subject_Name ?> <?php echo $exam_name ?> <?php echo $Class_Name ?> </header>
-                                   
+
                                 </div>
                                 <div class="card-body " id="bar-parent">
+                                    <?php $duration = DB::getInstance()->displayTableColumnValue("select Duration from exam where Id ='$exam'", "Duration");
+                                    if ($duration == '' || $duration == null) {
+                                        
+                                    } else {
+                                             if (DB::getInstance()->checkRows("SELECT * FROM policy_codes WHERE Code='$staff_code' and Exam_Id='$exam' AND Status=1")) {
+                                        ?>
+
+                                        <div class="col-md-8">
+                                            <div class="col-md-6">  <h2 style="color:blue;" >Duration: <input type="hidden" id="duration" value="<?php echo $duration.":00,".$staff_code.",".$exam; ?>"> <?php echo $duration.":00"; ?></h2>  </div> 
+                                            <div class="col-md-6"> <h2 style="color:red" class="elapsed-time-text">00:00:00</h2></div> 
+
+                                        </div>
+                                             <?php }} ?>
+                                    <div id="timeout_message"></div>
+
 
                                     <?php
                                     $current_date = date('Y-m-d');
@@ -93,73 +108,76 @@
                                             }
                                         } else {
                                             ?>
-
-                                            <?php
-                                            $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Exam_Id="' . $exam . '" ORDER BY Question_Id  ' . $limit;
-                                            if ($time_left <= 0) {
-                                                echo '<div class="alert alert-danger">Deadline has passed. Try another link</div>';
-                                            } else {
-                                                if (DB::getInstance()->checkRows($queryquestion)) {
-
-                                                    $data_got = DB::getInstance()->querySample($queryquestion);
-                                                    $no = 1;
-                                                    foreach ($data_got as $questionx) {
-                                                        ?>
-                                                        <div class="col-md-10">
-                                                            <?php
-                                                            echo"<strong> " . $questionx->Question . "</strong><br/>";
-
-                                                            $data_answer = DB::getInstance()->querySample("select * from policy_answers where Question_Id='$questionx->Question_Id' and status=1 ");
-                                                            $count_answer = 1;
-                                                            foreach ($data_answer as $answerx) {
-                                                                $alphabet = ($count_answer == 1) ? "a" : (($count_answer == 2) ? "b" : (($count_answer == 3) ? "c" : (($count_answer == 4) ? "d" : (($count_answer == 5) ? "e" : (($count_answer == 6) ? "f" : "g")))));
-                                                                ?>
-                                                                <div class='col-md-8' id="<?php echo $questionx->Question_Id . "_" . $count_answer . "_answer" ?>"><strong><?php echo $alphabet; ?>.</strong> <?php echo $answerx->Answer; ?>
-                                                                </div>
-                                                                <div class='col-md-1'> 
-                                                                    <div class='form-group'>
-                                                                        <?php if ($questionx->Choice > 1) { ?>
-                                                                            <div class='checkbox checkbox-icon-black'>
-
-                                                                                <input id='<?php echo $answerx->Answer_Id; ?>' type='checkbox' value='<?php echo $answerx->Answer_Id; ?>' onchange="check(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $exam ?>')">
-
-                                                                            </div><?php } else {
-                                                                            ?>
-
-                                                                            <div class="radio">
-                                                                                <input type="radio" name="<?php echo $questionx->Question_Id; ?>" id="<?php echo $answerx->Answer_Id; ?>" value='<?php echo $answerx->Answer_Id; ?>' onchange="radio(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $exam; ?>')">
-
-                                                                            </div>
-                                                                        <?php } ?>
-                                                                    </div>
-
-
-                                                                </div><br/><?php
-                                                                $count_answer++;
-                                                            }
-                                                            ?> 
-                                                            <br/>
-                                                        </div>
-                                                        <?php
-                                                        $no++;
-                                                    }
+                                            <div id="hidden">
+                                                <?php
+                                                $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Exam_Id="' . $exam . '" ORDER BY Question_Id  ' . $limit;
+                                                if ($time_left < 0) {
+                                                    echo '<div class="alert alert-danger">Deadline has passed. Try another link</div>';
                                                 } else {
-                                                    echo '<div class="alert alert-danger">No Question registered</div>';
-                                                }
-                                                ?>
+                                                    if (DB::getInstance()->checkRows($queryquestion)) {
 
-                                            </div>
-                                            <form role="form" action="index.php?page=<?php echo "question_page" . '&code=' . $staff_code . '&exam=' . $exam; ?>" method="POST" enctype="multipart/form-data">
+                                                        $data_got = DB::getInstance()->querySample($queryquestion);
+                                                        $no = 1;
+                                                        foreach ($data_got as $questionx) {
+                                                            ?>
+                                                            <div class="col-md-10">
+                                                                <?php
+                                                                echo"<strong> " . $questionx->Question . "</strong><br/>";
 
-                                                <div class="col-md-10">
-                                                    <button type="submit" name="submit_policy" class="btn btn-success pull-right" value="submit_policy">Finish</button>
-                                                </div> 
-                                            </form>
-                                            <?php
+                                                                $data_answer = DB::getInstance()->querySample("select * from policy_answers where Question_Id='$questionx->Question_Id' and status=1 ");
+                                                                $count_answer = 1;
+                                                                foreach ($data_answer as $answerx) {
+                                                                    $alphabet = ($count_answer == 1) ? "a" : (($count_answer == 2) ? "b" : (($count_answer == 3) ? "c" : (($count_answer == 4) ? "d" : (($count_answer == 5) ? "e" : (($count_answer == 6) ? "f" : "g")))));
+                                                                    ?>
+                                                                    <div class='col-md-8' id="<?php echo $questionx->Question_Id . "_" . $count_answer . "_answer" ?>"><strong><?php echo $alphabet; ?>.</strong> <?php echo $answerx->Answer; ?>
+                                                                    </div>
+                                                                    <div class='col-md-1'> 
+                                                                        <div class='form-group'>
+                        <?php if ($questionx->Choice > 1) { ?>
+                                                                                <div class='checkbox checkbox-icon-black'>
+
+                                                                                    <input id='<?php echo $answerx->Answer_Id; ?>' type='checkbox' value='<?php echo $answerx->Answer_Id; ?>' onchange="check(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $exam ?>')">
+
+                                                                                </div><?php } else {
+                                                    ?>
+
+                                                                                <div class="radio">
+                                                                                    <input type="radio" name="<?php echo $questionx->Question_Id; ?>" id="<?php echo $answerx->Answer_Id; ?>" value='<?php echo $answerx->Answer_Id; ?>' onchange="radio(this.value, '<?php echo $questionx->Question_Id; ?>', '<?php echo $staff_id; ?>', '<?php echo $questionx->Choice; ?>', '<?php echo $count_answer ?>', '<?php echo $exam; ?>')">
+
+                                                                                </div>
+                        <?php } ?>
+                                                                        </div>
+
+
+                                                                    </div><br/><?php
+                        $count_answer++;
+                    }
+                    ?> 
+                                                                <br/>
+                                                            </div>
+                                                            <?php
+                                                            $no++;
+                                                        }
+                                                    } else {
+                                                        echo '<div class="alert alert-danger">No Question registered</div>';
+                                                    }
+                                                    ?>
+
+                                                </div>
+
+                                                <form role="form" action="index.php?page=<?php echo "question_page" . '&code=' . $staff_code . '&exam=' . $exam; ?>" method="POST" enctype="multipart/form-data">
+
+                                                    <div class="col-md-10">
+                                                        <button type="submit" name="submit_policy" class="btn btn-success pull-right" value="submit_policy">Finish</button>
+                                                    </div> 
+                                                </form>
+                                                <?php
+                                            }
                                         }
                                     }
-                                }
-                                ?>
+                                    ?>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -226,7 +244,7 @@
         <!-- end page content -->
         <!-- end page container -->
         <!-- start footer -->
-        <?php include_once 'includes/footer.php'; ?>
+<?php include_once 'includes/footer.php'; ?>
         <!-- end footer -->
         <!-- start js include path -->
         <script src="js/jquery.min.js" type="text/javascript"></script>
@@ -238,6 +256,7 @@
         <script src="js/app.js" type="text/javascript"></script>
         <script src="js/layout.js" type="text/javascript"></script>
         <script src="js/theme-color.js" type="text/javascript"></script>
+        <script src="timing.js" type="text/javascript"></script>
 
 
         <!-- end js include path -->

@@ -57,31 +57,38 @@
                                     $marks = Input::get('marks');
                                     $choice = Input::get('choice');
                                     $subject = Input::get('subject');
-                                    $exam=Input::get('exam');
-                                    $exam_insert= DB::getInstance()->insert("exam", array(
-                                                "Exam_Name" => $exam,
-                                                "Subject_Id" => $subject));
-                                   
+                                    $exam = Input::get('exam');
+                                    $hours = Input::get('hours');
+                                    $minutes = Input::get('minutes');
+                                    $timing = $hours . ":" . $minutes;
+                                    $exam_insert = DB::getInstance()->insert("exam", array(
+                                        "Exam_Name" => $exam,
+                                        "Duration" => $timing,
+                                        "Status" => 1,
+                                        "Subject_Id" => $subject));
+
                                     $duplicate = 0;
                                     $submited = 0;
-                                     if($exam_insert){
-                                        $exam_id = DB::getInstance()->displayTableColumnValue("select Id from exam where Exam_Name='$exam' and Subject_Id='$subject'", "Id"); 
-                                        if($exam_id!=null&&$exam_id!=""){
-                                    for ($i = 0; $i < sizeof($question); $i++) {
-                                        $queryDup = DB::getInstance()->checkRows("select * from policy_questions where Question='$question[$i]' and Exam_Id='$exam_id'");
-                                        if (!$queryDup) {
-                                            DB::getInstance()->insert("policy_questions", array(
-                                                "Question" => $question[$i],
-                                                "Choice" => $choice[$i],
-                                                "Exam_Id" => $exam_id,
-                                                "Marks" => $marks[$i]));
-                                            $submited++;
-                                            $log = $_SESSION['hospital_staff_names'] . "  registered a new question :";
-                                            DB::getInstance()->logs($log);
-                                        } else {
-                                            $duplicate++;
+                                    if ($exam_insert) {
+                                        $exam_id = DB::getInstance()->displayTableColumnValue("select Id from exam where Exam_Name='$exam' and Subject_Id='$subject'", "Id");
+                                        if ($exam_id != null && $exam_id != "") {
+                                            for ($i = 0; $i < sizeof($question); $i++) {
+                                                $queryDup = DB::getInstance()->checkRows("select * from policy_questions where Question='$question[$i]' and Exam_Id='$exam_id'");
+                                                if (!$queryDup) {
+                                                    DB::getInstance()->insert("policy_questions", array(
+                                                        "Question" => $question[$i],
+                                                        "Choice" => $choice[$i],
+                                                        "Exam_Id" => $exam_id,
+                                                        "Marks" => $marks[$i]));
+                                                    $submited++;
+                                                    $log = $_SESSION['hospital_staff_names'] . "  registered a new question :";
+                                                    DB::getInstance()->logs($log);
+                                                } else {
+                                                    $duplicate++;
+                                                }
+                                            }
                                         }
-                                     }}}
+                                    }
                                     if ($submited > 0) {
                                         echo '<div class="alert alert-success">' . $submited . ' question(s) submitted successfully</div>';
                                     }
@@ -100,7 +107,7 @@
                                         </div>
                                         <div class="card-body " id="bar-parent">
                                             <div class="col-md-12">
-                                                <div class="form-group col-md-4">
+                                                <div class="form-group col-md-3">
                                                     <label>Class:</label>
                                                     <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'selectedData');" required>
                                                         <option value="">Choose...</option>
@@ -113,14 +120,36 @@
                                                     </select>
                                                 </div>
 
-                                                <div class="col-md-4" id="selectedData">
+                                                <div class="col-md-3" id="selectedData">
 
                                                 </div>
-                                                <div class="form-group col-md-4">
-                                                   <label>Exam name:</label> 
-                                                   <input class="form-control" name="exam" required>
+                                                <div class="form-group col-md-3">
+                                                    <label>Exam name:</label> 
+                                                    <input class="form-control" name="exam" required>
                                                 </div>
-                                                
+                                                <div class="form-group col-md-3">
+
+                                                    <div>
+                                                        <div class="col-md-6"><label>Hours:</label> <select class="form-control" name="hours" required><?php
+                                                                for ($i = 0; $i <= 12; $i++) {
+                                                                    $zero = ($i < 10) ? "0" : "";
+                                                                    echo '<option value="' . $zero . '' . $i . '">' . $zero . '' . $i . '</option>';
+                                                                }
+                                                                ?></select></div> 
+                                                        <div class="col-md-6"><label>Minutes:</label><select class="form-control" name="minutes" required><?php
+                                                                for ($i = 0; $i <= 59; $i++) {
+                                                                    $zero = ($i < 10) ? "0" : "";
+                                                                    echo '<option value="' . $zero . '' . $i . '">' . $zero . '' . $i . '</option>';
+                                                                }
+                                                                ?></select></div>
+
+                                                    </div>
+
+
+
+
+                                                </div>
+
                                             </div>
                                             <div id="question"><button type="button" class="btn btn-success btn-xs pull-right" id="add_more" onclick="add_element();">Add more</button>
                                                 <div id="add_element" > 
@@ -170,7 +199,7 @@
                                 }
                                 if (Input::exists() && Input::get("edit_staff") == "edit_staff") {
                                     $Question_Id = Input::get('question_id');
-                                    $subject=Input::get('subject');
+                                    $subject = Input::get('subject');
                                     $question = Input::get('question');
                                     $question_z = DB::getInstance()->displayTableColumnValue("select Question from policy_questions where Question_Id='$Question_Id' ", "Question");
 
@@ -185,7 +214,7 @@
                                     } else {
                                         echo $error = "<center><h4 style='color:red'>there is a server error</h4></center>";
                                     }
-                                    Redirect::go_to("index.php?page=policy_questions&mode=" . $mode."&subject=" . $subject);
+                                    Redirect::go_to("index.php?page=policy_questions&mode=" . $mode . "&subject=" . $subject);
                                 }
                                 ?>
 
@@ -194,128 +223,134 @@
                                         <header><?php echo $modez = ($mode == 'registered') ? '' : 'Last entered 10 '; ?>questions List</header>
                                     </div>
                                     <div class="card-body " id="bar-parent">
-                                            <div class="col-md-12">
-                                                <form method="post" action="index.php?page=<?php echo "policy_questions" . '&mode=' . $mode; ?>">
-                                                    <div class="form-group col-md-3">
-                                                        <label>Class:</label>
-                                                        <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'uploadedData');" required>
-                                                            <option value="">Choose...</option>
-                                                            <?php
-                                                            $qstn_list = DB::getInstance()->querySample("select * from class ORDER BY Id");
-                                                            foreach ($qstn_list as $qtn):
-                                                                echo '<option value="' . $qtn->Id . '">' . $qtn->Class_Name . '</option>';
-                                                            endforeach;
-                                                            ?>
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="col-md-3" id="uploadedData">
-
-                                                    </div>
-                                                    
-                                                    <div class="col-md-3" id="exam_data">
-
-                                                    </div>
-
-                                                    <div class="box-footer col-md-3">
-                                                        <br/>
-                                                        <button type="submit"  name="search" value="search" class="btn btn-success fa fa-search pull-right">search</button>
-                                                    </div>
-                                                </form>
-
-                                            </div>
-                                        <?php
-                                         if ((Input::exists() && Input::get("exam"))|| isset($_GET['exam']) ) {
-                                                    $exam = Input::get("exam");
-                                        $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Exam_Id="'.$exam.'" ORDER BY Question_Id' . $limit;
-                                        if (DB::getInstance()->checkRows($queryquestion)) {
-                                            ?>
-                                            <table id="example1" class="table table-bordered table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="width: 1%;">#</th>
-                                                        <th >Question</th>
-                                                        <th >Marks @ Qtn</th>
-                                                        <th style="width: 20%;"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    $data_got = DB::getInstance()->querySample($queryquestion);
-                                                    $no = 1;
-                                                    foreach ($data_got as $questionx) {
+                                        <div class="col-md-12">
+                                            <form method="post" action="index.php?page=<?php echo "policy_questions" . '&mode=' . $mode; ?>">
+                                                <div class="form-group col-md-3">
+                                                    <label>Class:</label>
+                                                    <select name="class" class="select2" style="width: 100%" onchange="returnsubject(this.value, 'uploadedData');" required>
+                                                        <option value="">Choose...</option>
+                                                        <?php
+                                                        $qstn_list = DB::getInstance()->querySample("select * from class ORDER BY Id");
+                                                        foreach ($qstn_list as $qtn):
+                                                            echo '<option value="' . $qtn->Id . '">' . $qtn->Class_Name . '</option>';
+                                                        endforeach;
                                                         ?>
-                                                        <tr> 
-                                                            <td style="width: 1%;"><?php echo $no; ?></td>
-                                                            <td><?php echo $questionx->Question; ?></td>
-                                                            <td><?php echo $questionx->Marks; ?></td>
-                                                            <td style="width: 20%;">
-                                                                <div class="btn-group xs">
-                                                                    <button type="button" class="btn btn-success">Action</button>
-                                                                    <button type="button" class="btn btn-success  dropdown-toggle" data-toggle="dropdown">
-                                                                        <span class="caret"></span>
-                                                                        <span class="sr-only">Toggle Dropdown</span>
-                                                                    </button>
-                                                                    <ul class="dropdown-menu" role="menu">
+                                                    </select>
+                                                </div>
 
-                                                                        <li><a  data-toggle="modal" data-target="#modal-<?php echo $questionx->Question_Id; ?>">Edit</a></li>
-                                                                        <li><a href="index.php?page=<?php echo "policy_questions" . '&action=delete&Question_Id=' . $questionx->Question_Id . '&mode=' . $mode; ?>" onclick="return confirm('Are you sure you want to delete <?php echo $questionx->Question; ?>?');">Delete</a></li>
-                                                                        <li class="divider"></li>
+                                                <div class="col-md-3" id="uploadedData">
 
-                                                                    </ul>
-                                                                </div>
+                                                </div>
 
-                                                            </td>
+                                                <div class="col-md-3" id="exam_data">
 
-                                                    <div class="modal fade" id="modal-<?php echo $questionx->Question_Id; ?>">
-                                                        <div class="modal-dialog">
-                                                            <form role="form" action="index.php?page=<?php echo "policy_questions" . '&mode=' . $mode. '&subject=' . $subject; ?>" method="POST" enctype="multipart/form-data">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span></button>
+                                                </div>
 
-                                                                    </div> <div class="modal-body">
-                                                                        <input type="hidden" name="question_id" value="<?php echo $questionx->Question_Id ?>">
-                                                                        
-                                                                        <div class="form-group">
-                                                                            <label>question(s)</label>
-                                                                            <textarea name="question" rows="2" class="form-control" required><?php echo $questionx->Question ?></textarea>
+                                                <div class="box-footer col-md-3">
+                                                    <br/>
+                                                    <button type="submit"  name="search" value="search" class="btn btn-success fa fa-search pull-right">search</button>
+                                                </div>
+                                            </form>
+
+                                        </div>
+                                        <?php
+                                        if ((Input::exists() && Input::get("exam")) || isset($_GET['exam'])) {
+                                            $exam = Input::get("exam");
+                                            $queryquestion = 'SELECT * FROM policy_questions WHERE Status=1 and Exam_Id="' . $exam . '" ORDER BY Question_Id' . $limit;
+                                            if (DB::getInstance()->checkRows($queryquestion)) {
+                                                ?>
+                                         <div class="card-head">
+                                            <header>Exam:  <?php echo DB::getInstance()->displayTableColumnValue("select Exam_Name from exam where Id='$exam' ", "Exam_Name");?>
+                                                <br/> <br/>Duration: <?php echo DB::getInstance()->displayTableColumnValue("select Duration from exam where Id='$exam' ", "Duration");?> hrs</header>
+
+                                        </div>
+                                                <table id="example1" class="table table-bordered table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 1%;">#</th>
+                                                            <th >Question</th>
+                                                            <th >Marks @ Qtn</th>
+                                                            <th style="width: 20%;"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        $data_got = DB::getInstance()->querySample($queryquestion);
+                                                        $no = 1;
+                                                        foreach ($data_got as $questionx) {
+                                                            ?>
+                                                            <tr> 
+                                                                <td style="width: 1%;"><?php echo $no; ?></td>
+                                                                <td><?php echo $questionx->Question; ?></td>
+                                                                <td><?php echo $questionx->Marks; ?></td>
+                                                                <td style="width: 20%;">
+                                                                    <div class="btn-group xs">
+                                                                        <button type="button" class="btn btn-success">Action</button>
+                                                                        <button type="button" class="btn btn-success  dropdown-toggle" data-toggle="dropdown">
+                                                                            <span class="caret"></span>
+                                                                            <span class="sr-only">Toggle Dropdown</span>
+                                                                        </button>
+                                                                        <ul class="dropdown-menu" role="menu">
+
+                                                                            <li><a  data-toggle="modal" data-target="#modal-<?php echo $questionx->Question_Id; ?>">Edit</a></li>
+                                                                            <li><a href="index.php?page=<?php echo "policy_questions" . '&action=delete&Question_Id=' . $questionx->Question_Id . '&mode=' . $mode; ?>" onclick="return confirm('Are you sure you want to delete <?php echo $questionx->Question; ?>?');">Delete</a></li>
+                                                                            <li class="divider"></li>
+
+                                                                        </ul>
+                                                                    </div>
+
+                                                                </td>
+
+                                                        <div class="modal fade" id="modal-<?php echo $questionx->Question_Id; ?>">
+                                                            <div class="modal-dialog">
+                                                                <form role="form" action="index.php?page=<?php echo "policy_questions" . '&mode=' . $mode . '&subject=' . $subject; ?>" method="POST" enctype="multipart/form-data">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span></button>
+
+                                                                        </div> <div class="modal-body">
+                                                                            <input type="hidden" name="question_id" value="<?php echo $questionx->Question_Id ?>">
+
+                                                                            <div class="form-group">
+                                                                                <label>question(s)</label>
+                                                                                <textarea name="question" rows="2" class="form-control" required><?php echo $questionx->Question ?></textarea>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                                                            <button type="submit" name="edit_staff" value="edit_staff" class="btn btn-primary">Save changes</button>
                                                                         </div>
 
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                                                        <button type="submit" name="edit_staff" value="edit_staff" class="btn btn-primary">Save changes</button>
-                                                                    </div>
 
-
-                                                                </div>
-                                                            </form>
-                                                            <!-- /.modal-content -->
+                                                                    </div>
+                                                                </form>
+                                                                <!-- /.modal-content -->
+                                                            </div>
+                                                            <!-- /.modal-dialog -->
                                                         </div>
-                                                        <!-- /.modal-dialog -->
-                                                    </div>
-                                                    </tr>
-                                                    <?php
-                                                    $no++;
-                                                }
-                                                ?>
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th></th>
-                                                        <th>Question</th>
-                                                        <th>Marks @ Qtn</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </tfoot>
+                                                        </tr>
+                                                        <?php
+                                                        $no++;
+                                                    }
+                                                    ?>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>Question</th>
+                                                            <th>Marks @ Qtn</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </tfoot>
 
-                                            </table>
-                                            <?php
-                                        } else {
-                                            echo '<div class="alert alert-danger">No Question registered</div>';
-                                         }}
+                                                </table>
+                                                <?php
+                                            } else {
+                                                echo '<div class="alert alert-danger">No Question registered</div>';
+                                            }
+                                        }
                                         ?>
 
 

@@ -40,9 +40,16 @@ $_SESSION["PREVIOUS_URL"] = $_SERVER["REQUEST_URI"];
                             <span class="title">Settings</span><span class="arrow "></span>
                         </a>
                         <ul class="sub-menu" >
-                            <li class="nav-item">
-                                <a href="index.php?page=system_email" >System email</a>
-                            </li>
+                            <?php
+                            if ((isset($_SESSION['hospital_role']) && ($_SESSION['hospital_role'] == "Student" || $_SESSION['hospital_role'] == "Staff")) && !isset($_SESSION['immergencepassword'])) {
+                                
+                            } else {
+                                ?>
+                                <li class="nav-item">
+                                    <a href="index.php?page=system_email" >System email</a>
+                                </li>
+                            <?php }
+                            ?>
 
                             <li class="nav-item">
                                 <a href="index.php?page=class&mode=register" >Register Class(es)</a>
@@ -61,7 +68,7 @@ $_SESSION["PREVIOUS_URL"] = $_SERVER["REQUEST_URI"];
                                 <a href="index.php?page=policy_questions&mode=register" >Register Questions</a>
                             </li>
                             <li class="nav-item">
-                                <a href="index.php?page=policy_answer&mode=register" >Register Answers to questions</a>
+                                <a href="index.php?page=policy_answer&mode=registered" >Register Answers to questions</a>
                             </li>
                             <li class="nav-item">
                                 <a href="index.php?page=marking_dates&mode=register" >Set deadline</a>
